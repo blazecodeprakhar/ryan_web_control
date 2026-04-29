@@ -18,7 +18,9 @@ class DummyVoice:
         pass
 
 class DummyAI:
-    def generate_response(self, text):
+    def chat(self, text, voice_callback=None):
+        if voice_callback:
+            voice_callback("AI response")
         return "AI response"
 
 # Create a command handler to execute the commands
