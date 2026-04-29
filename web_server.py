@@ -173,6 +173,17 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     pyautogui.press("volumedown")
             elif command == "lock_pc":
                 os.system("rundll32.exe user32.dll,LockWorkStation")
+            elif command == "unlock_pc":
+                import pyautogui
+                import time
+                pyautogui.press("space")
+                time.sleep(0.5)
+                pyautogui.write("4171")
+                pyautogui.press("enter")
+                print("Unlock PC sequence initiated.")
+            elif command == "system_sleep":
+                print("Initiating OS Sleep...")
+                os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
             elif command == "open_dashboard":
                 jarvis_cmd = "open antigravity premium pro"
             elif command == "listen_command":

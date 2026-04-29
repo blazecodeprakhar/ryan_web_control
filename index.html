@@ -541,18 +541,24 @@
                     <span>🎮 Activate Chill Mode</span>
                     <span>→</span>
                 </button>
-                <button class="action-btn sleep-btn" onclick="toggleSleep(true)" id="sleep-btn">
-                    <span>💤 Put System to Sleep</span>
-                    <span>⏾</span>
-                </button>
             </div>
 
             <!-- System Controls -->
             <div class="card glass">
                 <h2>💻 Terminal Controls</h2>
                 
-                <button class="action-btn" onclick="sendCommand('lock_pc')">
-                    <span>🔒 Lock Workstation</span>
+                <div class="btn-row" style="margin-bottom: 10px;">
+                    <button class="action-btn" onclick="sendCommand('lock_pc')" style="flex: 1; justify-content: center;">
+                        <span>🔒 Lock PC</span>
+                    </button>
+                    <button class="action-btn accent" onclick="sendCommand('unlock_pc')" style="flex: 1; justify-content: center;">
+                        <span>🔓 Unlock PC</span>
+                    </button>
+                </div>
+
+                <button class="action-btn sleep-btn" onclick="if(confirm('Are you sure you want to put the OS to sleep?')) sendCommand('system_sleep')" style="margin-bottom: 10px;">
+                    <span>💤 Put System to Sleep</span>
+                    <span>⏾</span>
                 </button>
                 
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px; margin-bottom: 5px;">
