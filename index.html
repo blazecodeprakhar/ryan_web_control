@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ryan AI Control - Premium</title>
+    <title>Ryan AI Control</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
@@ -514,10 +514,111 @@
             transform: scale(1.05);
             box-shadow: 0 20px 45px rgba(16, 185, 129, 0.6);
         }
+
+        /* Custom Modal System */
+        #custom-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        #custom-modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .custom-modal {
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #custom-modal-overlay.active .custom-modal {
+            transform: scale(1);
+        }
+        
+        .custom-modal h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #fca5a5, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .custom-modal p {
+            color: var(--text-main);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .modal-btn-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .modal-btn-row .action-btn {
+            justify-content: center;
+            flex: 1;
+        }
+
+        /* Mobile Perfect Responsiveness */
+        @media (max-width: 600px) {
+            #login-screen {
+                padding: 30px 20px;
+                border-radius: 20px;
+                border-width: 0;
+                box-shadow: none;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+                padding: 20px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .action-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            .mic-btn {
+                width: 80px; height: 80px; font-size: 24px;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Custom Premium Modal -->
+    <div id="custom-modal-overlay">
+        <div class="custom-modal glass" id="custom-modal">
+            <h3 id="custom-modal-title">Confirm</h3>
+            <p id="custom-modal-message">Are you sure?</p>
+            <div class="modal-btn-row">
+                <button class="action-btn" id="modal-cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="action-btn danger" id="modal-confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Sleep Overlay -->
     <div id="sleep-overlay">
@@ -527,7 +628,7 @@
 
     <!-- Login Screen -->
     <div id="login-screen" class="glass">
-        <h1>Ryan Premium</h1>
+        <h1>Ryan AI</h1>
         <p>Establish a secure local connection to AI Terminal</p>
 
         <div class="input-group">
@@ -541,11 +642,13 @@
         </div>
 
         <div class="error-msg" id="login-error"></div>
-        
+
         <button class="main-btn" onclick="attemptLogin()" style="margin-bottom: 15px;">Connect to System</button>
-        <button class="action-btn accent" onclick="scanQR()" style="justify-content: center; width: 100%;">📷 Scan QR Code</button>
-        
-        <div id="reader" style="width: 100%; margin-top: 15px; border-radius: 12px; overflow: hidden; display: none;"></div>
+        <button class="action-btn accent" onclick="scanQR()" style="justify-content: center; width: 100%;">📷 Scan QR
+            Code</button>
+
+        <div id="reader" style="width: 100%; margin-top: 15px; border-radius: 12px; overflow: hidden; display: none;">
+        </div>
     </div>
 
     <!-- Dashboard -->
@@ -616,7 +719,7 @@
                 </div>
 
                 <button class="action-btn sleep-btn"
-                    onclick="if(confirm('Are you sure you want to put the OS to sleep?')) sendCommand('system_sleep')"
+                    onclick="showConfirm('System Sleep', 'Are you sure you want to put the OS to sleep?', () => sendCommand('system_sleep'), false)"
                     style="margin-bottom: 10px;">
                     <span>Put System to Sleep</span>
                     <span>⏾</span>
@@ -635,12 +738,12 @@
                 </div>
 
                 <button class="action-btn danger"
-                    onclick="if(confirm('Are you sure you want to terminate all apps?')) sendCommand('terminate_all')">
+                    onclick="showConfirm('Terminate Tasks', 'Are you sure you want to terminate all active user applications?', () => sendCommand('terminate_all'))">
                     <span>🛑 Terminate All Tasks</span>
                 </button>
 
                 <button class="action-btn danger"
-                    onclick="if(confirm('Are you sure you want to shut down the PC?')) sendCommand('shutdown')">
+                    onclick="showConfirm('Force Shutdown', 'WARNING: This will forcefully shut down your PC instantly. Are you completely sure?', () => sendCommand('shutdown'))">
                     <span>⚡ Force Shutdown PC</span>
                 </button>
             </div>
@@ -718,6 +821,30 @@
             });
         }
 
+        // Custom Modal Logic
+        function showConfirm(title, message, confirmCallback, isDanger=true) {
+            const overlay = document.getElementById('custom-modal-overlay');
+            document.getElementById('custom-modal-title').innerText = title;
+            document.getElementById('custom-modal-title').style.background = isDanger ? 'linear-gradient(to right, #fca5a5, #ef4444)' : 'linear-gradient(to right, #93c5fd, #3b82f6)';
+            document.getElementById('custom-modal-title').style.webkitBackgroundClip = 'text';
+            document.getElementById('custom-modal-message').innerText = message;
+            
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            confirmBtn.className = isDanger ? 'action-btn danger' : 'action-btn accent';
+            confirmBtn.innerText = isDanger ? 'Proceed' : 'Confirm';
+            
+            confirmBtn.onclick = () => {
+                closeModal();
+                confirmCallback();
+            };
+            
+            overlay.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal-overlay').classList.remove('active');
+        }
+
         // Setup Speech Recognition for mobile browser
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
@@ -756,7 +883,7 @@
             const errorEl = document.getElementById('login-error');
             reader.style.display = 'block';
             errorEl.innerText = "";
-            
+
             const html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start(
                 { facingMode: "environment" },
@@ -765,7 +892,7 @@
                     html5QrCode.stop().then(() => {
                         reader.style.display = 'none';
                     });
-                    
+
                     const parts = decodedText.split('|');
                     if (parts.length >= 2) {
                         document.getElementById('local-ip').value = parts[0].replace('http://', '');
@@ -974,8 +1101,21 @@
                             data.tasks.forEach(task => {
                                 const item = document.createElement('div');
                                 item.className = 'task-item';
+                                
+                                let icon = '🖥️';
+                                const n = task.name.toLowerCase();
+                                if (n.includes('chrome')) icon = '🌐';
+                                else if (n.includes('edge')) icon = '🌊';
+                                else if (n.includes('antigravity') || n.includes('code')) icon = '👨‍💻';
+                                else if (n.includes('discord')) icon = '💬';
+                                else if (n.includes('spotify')) icon = '🎵';
+                                else if (n.includes('cmd') || n.includes('powershell')) icon = '⌨️';
+                                
                                 item.innerHTML = `
-                                <div class="task-name">${task.name} <span style="color:var(--text-muted);font-size:0.8rem;">(${task.pid})</span></div>
+                                <div class="task-name" style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 1.2rem;">${icon}</span>
+                                    ${task.name} 
+                                </div>
                                 <button class="kill-btn" onclick="killTask(${task.pid}, '${task.name}')">Kill</button>
                             `;
                                 taskList.appendChild(item);
