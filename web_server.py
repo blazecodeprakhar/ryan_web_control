@@ -1,0 +1,199 @@
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
+import os
+import sys
+
+# Add parent directory to path so we can import jarvis modules
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from core.command_handler import CommandHandler
+
+# Dummy classes for CommandHandler
+class DummyVoice:
+    def speak(self, text):
+        print(f"Voice: {text}")
+    def speak_async(self, text):
+        print(f"Voice Async: {text}")
+    def wait_until_done(self):
+        pass
+
+class DummyAI:
+    def generate_response(self, text):
+        return "AI response"
+
+# Create a command handler to execute the commands
+cmd_handler = CommandHandler(DummyVoice(), DummyAI())
+
+class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200, "ok")
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization')
+        self.end_headers()
+
+    def do_GET(self):
+        if self.path == '/' or self.path == '/index.html':
+            try:
+                html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'index.html')
+                with open(html_path, 'rb') as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                self.wfile.write(content)
+            except Exception as e:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"index.html not found.")
+        elif self.path == '/api/tasks':
+            try:
+                import psutil
+                tasks = []
+                for proc in psutil.process_iter(['pid', 'name']):
+                    try:
+                        name = proc.info['name']
+                        if name and name.endswith('.exe') and name not in ['svchost.exe', 'System Idle Process', 'System', 'Registry', 'smss.exe', 'csrss.exe', 'wininit.exe', 'services.exe', 'lsass.exe', 'winlogon.exe']:
+                            tasks.append({"pid": proc.info['pid'], "name": name})
+                    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                        pass
+                
+                # filter unique names to keep list concise
+                unique_tasks = {}
+                for t in tasks:
+                    if t['name'] not in unique_tasks:
+                        unique_tasks[t['name']] = t
+                
+                self.send_response(200)
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"tasks": list(unique_tasks.values())}).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self):
+        if self.path == '/api/execute':
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+            except:
+                self.send_response(400)
+                self.end_headers()
+                return
+
+            password = data.get('password')
+            command = data.get('command')
+
+            if password != '4171':
+                self.send_response(401)
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(b"Unauthorized")
+                return
+
+            print(f"Executing command from web: {command}")
+            
+            # Map simple commands to Jarvis commands
+            jarvis_cmd = ""
+            if command == "disconnect_server":
+                print("Disconnect requested. Shutting down Web Server.")
+                self.send_response(200)
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                response = {"status": "success", "message": "Server disconnected and closed."}
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                
+                # Wait 1 second so response can be sent, then kill the script
+                import threading
+                threading.Timer(1.0, lambda: os._exit(0)).start()
+                return
+            elif command == "shutdown":
+                jarvis_cmd = "shutdown system"
+            elif command == "terminate_all":
+                jarvis_cmd = "terminate all tasks"
+            elif command == "kill_task":
+                import psutil
+                pid = data.get('pid')
+                try:
+                    p = psutil.Process(pid)
+                    p.terminate()
+                    print(f"Task {pid} terminated.")
+                except Exception as e:
+                    print(f"Failed to kill task {pid}: {e}")
+            elif command == "mute_toggle":
+                import pyautogui
+                pyautogui.press("volumemute")
+            elif command == "volume_up":
+                import pyautogui
+                for _ in range(5):
+                    pyautogui.press("volumeup")
+            elif command == "volume_down":
+                import pyautogui
+                for _ in range(5):
+                    pyautogui.press("volumedown")
+            elif command == "lock_pc":
+                os.system("rundll32.exe user32.dll,LockWorkStation")
+            elif command == "open_dashboard":
+                jarvis_cmd = "open antigravity premium pro"
+            elif command == "listen_command":
+                print("Web requested listening. Voice commands can also be typed and sent directly!")
+            elif command == "set_volume":
+                val = data.get('value', 50)
+                print(f"Volume set to {val} on web UI.")
+            elif command == "sleep":
+                jarvis_cmd = "sleep"
+            elif command == "wake":
+                jarvis_cmd = "wake up" # assuming jarvis has a wake up phrase
+            else:
+                # Passes sleep, workstation 1/2/3, chill mode, and voice text directly to Jarvis
+                jarvis_cmd = command
+
+            if jarvis_cmd:
+                cmd_handler.process(jarvis_cmd)
+
+            self.send_response(200)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            response = {"status": "success", "message": f"Task '{command}' successful."}
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+
+def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=5000):
+    server_address = ('0.0.0.0', port)
+    httpd = server_class(server_address, handler_class)
+    
+    # Get local IP
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+        
+    print(f"==================================================")
+    print(f"🌐 Jarvis Web Server is RUNNING!")
+    print(f"📱 Enter this IP on your phone: http://{IP}:{port}")
+    print(f"🔑 Password: 4171")
+    print(f"==================================================")
+    
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    httpd.server_close()
+    print("Server stopped.")
+
+if __name__ == '__main__':
+    run()

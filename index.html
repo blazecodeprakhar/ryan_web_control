@@ -3,27 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ryan AI Control</title>
+    <title>Ryan AI Control - Premium</title>
     <link rel="icon" type="image/png" href="Ryan.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050505;
-            --panel-bg: rgba(15, 15, 20, 0.85);
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
+            --bg-color: #030014;
+            --panel-bg: rgba(10, 10, 15, 0.6);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --danger: #ef4444;
+            --danger-hover: #dc2626;
             --success: #10b981;
-            --accent: #a855f7;
+            --accent: #d946ef;
+            --accent-hover: #c026d3;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
         }
 
         body {
@@ -34,40 +37,55 @@
             justify-content: center;
             align-items: center;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 50%), 
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0, transparent 50%);
+                radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.15), transparent 25%);
+            background-attachment: fixed;
             overflow-x: hidden;
         }
 
         .glass {
             background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass:hover {
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         #login-screen {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 40px;
             text-align: center;
             transition: opacity 0.5s ease, transform 0.5s ease;
+            position: absolute;
         }
 
         #login-screen h1 {
             margin-bottom: 8px;
-            font-weight: 600;
-            background: linear-gradient(to right, #60a5fa, #c084fc);
+            font-weight: 800;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(168,85,247,0.2); }
+            to { text-shadow: 0 0 20px rgba(99,102,241,0.5); }
         }
 
         #login-screen p {
             color: var(--text-muted);
             margin-bottom: 30px;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         .input-group {
@@ -78,37 +96,45 @@
         .input-group label {
             display: block;
             margin-bottom: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
         .input-group input {
             width: 100%;
-            padding: 14px 16px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             color: white;
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .input-group input:focus {
-            border-color: var(--primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(217, 70, 239, 0.3);
         }
 
         button.main-btn {
             width: 100%;
-            padding: 14px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 12px;
             border: none;
-            background-color: var(--primary);
+            background: linear-gradient(135deg, #6366f1, #a855f7);
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        button.main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4);
         }
 
         button.main-btn:active {
@@ -117,49 +143,60 @@
 
         .error-msg {
             color: var(--danger);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             margin-top: 10px;
             min-height: 20px;
+            font-weight: 600;
         }
 
         #dashboard {
             display: none;
             width: 100%;
-            max-width: 900px;
-            padding: 20px;
+            max-width: 1200px;
+            padding: 40px 20px;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(30px);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
+            padding: 20px 30px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .status-badge {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             background: rgba(16, 185, 129, 0.1);
             color: var(--success);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
             font-weight: 600;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             background-color: var(--success);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--success);
+            box-shadow: 0 0 10px var(--success);
             animation: pulse 2s infinite;
         }
 
@@ -171,95 +208,125 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
         }
 
         .card {
-            padding: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .card h2 {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: #e2e8f0;
+            gap: 12px;
+            color: #fff;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
         }
 
-        /* Toggles */
-        .toggle-row {
+        /* Buttons vs Toggles */
+        .action-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-btn.accent:hover {
+            background: rgba(217, 70, 239, 0.15);
+            border-color: var(--accent);
+        }
+
+        .action-btn.danger {
+            color: #fca5a5;
+        }
+        .action-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+            color: #fff;
+        }
+        
+        .action-btn.sleep-btn {
+            background: linear-gradient(to right, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .action-btn.wake-btn {
+            background: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #a7f3d0;
+            display: none;
+        }
+
+        /* Task Manager Styles */
+        .task-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .task-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            margin-bottom: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
-        .toggle-row:hover {
-            background: rgba(255, 255, 255, 0.06);
+        
+        .task-item:last-child {
+            border-bottom: none;
         }
-
-        .toggle-label {
+        
+        .task-name {
             font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-family: monospace;
+            color: #e2e8f0;
+            word-break: break-all;
         }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 28px;
-        }
-
-        .switch input { 
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
+        
+        .kill-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
             cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255,255,255,0.15);
-            transition: .4s;
-            border-radius: 34px;
+            transition: all 0.2s;
+            font-weight: 600;
         }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .slider.danger {
-            background-color: var(--danger);
-        }
-
-        input:checked + .slider.accent {
-            background-color: var(--accent);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(22px);
+        
+        .kill-btn:hover {
+            background: var(--danger);
+            color: white;
         }
 
         /* Mic & Audio features */
@@ -271,83 +338,156 @@
         }
 
         .mic-btn {
-            width: 90px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #6366f1, #a855f7);
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 32px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .mic-btn::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            opacity: 0.3;
+            filter: blur(10px);
+            z-index: -1;
             transition: all 0.3s;
         }
 
         .mic-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.6);
+        }
+        .mic-btn:hover::before {
+            opacity: 0.6;
+            inset: -10px;
+            filter: blur(15px);
         }
 
         .mic-btn.recording {
             background: linear-gradient(135deg, #ef4444, #f59e0b);
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
-            animation: pulse-danger 1.5s infinite;
+            animation: pulse-recording 1.5s infinite;
+        }
+        .mic-btn.recording::before {
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
         }
 
-        @keyframes pulse-danger {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        @keyframes pulse-recording {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
         .log-window {
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 8px;
-            padding: 16px;
-            height: 180px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            height: 220px;
             overflow-y: auto;
             font-family: 'Consolas', monospace;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #a7f3d0;
             border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.3);
         }
 
         .log-entry {
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 6px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 8px;
+            line-height: 1.4;
         }
 
         .log-entry:last-child {
             border-bottom: none;
         }
 
+        .btn-row {
+            display: flex;
+            gap: 15px;
+        }
+
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        #sleep-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #sleep-overlay h2 {
+            color: var(--text-main);
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .wake-hero-btn {
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 600;
+        }
+
+        .wake-hero-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 45px rgba(16, 185, 129, 0.6);
+        }
 
     </style>
 </head>
 <body>
 
+    <!-- Sleep Overlay -->
+    <div id="sleep-overlay">
+        <h2>System is Sleeping</h2>
+        <button class="wake-hero-btn" onclick="toggleSleep(false)">☀️ Wake Up System</button>
+    </div>
+
     <!-- Login Screen -->
     <div id="login-screen" class="glass">
-        <h1>Ryan Secure Access</h1>
+        <h1>Ryan Premium</h1>
         <p>Establish a secure local connection to AI Terminal</p>
         
         <div class="input-group">
             <label for="local-ip">Local PC Address (IP:Port)</label>
-            <input type="text" id="local-ip" placeholder="Look at your PC terminal (e.g. 192.168.1.5:5000)">
+            <input type="text" id="local-ip" placeholder="e.g. 192.168.1.5:5000">
         </div>
         
         <div class="input-group">
             <label for="password">Connection Password</label>
-            <input type="password" id="password" placeholder="Enter password (4171)">
+            <input type="password" id="password" placeholder="Enter Secure Password">
         </div>
         
         <div class="error-msg" id="login-error"></div>
@@ -357,24 +497,24 @@
 
     <!-- Dashboard -->
     <div id="dashboard">
-        <div class="dashboard-header glass" style="padding: 15px 24px; border-radius: 100px;">
-            <h2 style="font-size: 1.2rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Ryan AI Terminal</h2>
+        <div class="dashboard-header glass">
+            <h2>Ryan AI Terminal</h2>
             <div class="status-badge">
                 <div class="status-dot"></div>
                 AI Status: Online & Secured
             </div>
-            <button onclick="disconnect()" style="width: auto; padding: 8px 16px; font-size: 0.85rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; border-radius: 8px; cursor: pointer; transition: all 0.2s;">Disconnect Server</button>
+            <button class="action-btn danger" onclick="disconnect()" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">Disconnect Server</button>
         </div>
 
         <div class="grid">
-            <!-- Voice Control (Phone Mic) -->
+            <!-- Voice Control -->
             <div class="card glass">
                 <h2>🎤 AI Voice Assistant</h2>
                 <div class="mic-container">
                     <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
                     </button>
-                    <p style="margin-top: 20px; font-size: 0.95rem; color: var(--text-muted);" id="mic-status">Tap to speak to Ryan</p>
+                    <p style="margin-top: 25px; font-size: 1.1rem; color: var(--text-muted); font-weight: 300;" id="mic-status">Tap to speak to Ryan</p>
                 </div>
             </div>
 
@@ -382,77 +522,61 @@
             <div class="card glass">
                 <h2>🚀 Workstations & Modes</h2>
                 
-                <div class="toggle-row">
-                    <div class="toggle-label">💻 Workstation 1</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'workstation 1')">
-                        <span class="slider accent"></span>
-                    </label>
-                </div>
-                <div class="toggle-row">
-                    <div class="toggle-label">💻 Workstation 2</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'workstation 2')">
-                        <span class="slider accent"></span>
-                    </label>
-                </div>
-                <div class="toggle-row">
-                    <div class="toggle-label">💻 Workstation 3</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'workstation 3')">
-                        <span class="slider accent"></span>
-                    </label>
-                </div>
-                <div class="toggle-row">
-                    <div class="toggle-label">🎮 Chill Mode</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'chill mode')">
-                        <span class="slider accent"></span>
-                    </label>
-                </div>
-                <div class="toggle-row">
-                    <div class="toggle-label">💤 Sleep Mode</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'sleep')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                <button class="action-btn accent" onclick="sendCommand('workstation 1')">
+                    <span>💻 Activate Workstation 1</span>
+                    <span>→</span>
+                </button>
+                <button class="action-btn accent" onclick="sendCommand('workstation 2')">
+                    <span>💻 Activate Workstation 2</span>
+                    <span>→</span>
+                </button>
+                <button class="action-btn accent" onclick="sendCommand('workstation 3')">
+                    <span>💻 Activate Workstation 3</span>
+                    <span>→</span>
+                </button>
+                <button class="action-btn accent" onclick="sendCommand('chill mode')">
+                    <span>🎮 Activate Chill Mode</span>
+                    <span>→</span>
+                </button>
+                <button class="action-btn sleep-btn" onclick="toggleSleep(true)" id="sleep-btn">
+                    <span>💤 Put System to Sleep</span>
+                    <span>⏾</span>
+                </button>
             </div>
 
             <!-- System Controls -->
             <div class="card glass">
                 <h2>💻 Terminal Controls</h2>
                 
-                <div class="toggle-row">
-                    <div class="toggle-label">🔒 Lock Workstation</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'lock_pc')">
-                        <span class="slider"></span>
-                    </label>
+                <button class="action-btn" onclick="sendCommand('lock_pc')">
+                    <span>🔒 Lock Workstation</span>
+                </button>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px; margin-bottom: 5px;">
+                    <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">Volume Control</div>
+                    <div class="btn-row">
+                        <button class="action-btn" style="justify-content: center;" onclick="sendCommand('volume_down')">🔉 Down</button>
+                        <button class="action-btn" style="justify-content: center;" onclick="sendCommand('mute_toggle')">🔇 Mute</button>
+                        <button class="action-btn" style="justify-content: center;" onclick="sendCommand('volume_up')">🔊 Up</button>
+                    </div>
                 </div>
 
-                <div class="toggle-row">
-                    <div class="toggle-label">🔇 PC Mute</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'mute_toggle')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                <button class="action-btn danger" onclick="if(confirm('Are you sure you want to terminate all apps?')) sendCommand('terminate_all')">
+                    <span>🛑 Terminate All Tasks</span>
+                </button>
 
-                <div class="toggle-row" style="border-color: rgba(239, 68, 68, 0.2);">
-                    <div class="toggle-label" style="color: var(--danger);">🛑 Terminate All Tasks</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'terminate_all')">
-                        <span class="slider danger"></span>
-                    </label>
-                </div>
+                <button class="action-btn danger" onclick="if(confirm('Are you sure you want to shut down the PC?')) sendCommand('shutdown')">
+                    <span>⚡ Force Shutdown PC</span>
+                </button>
+            </div>
 
-                <div class="toggle-row" style="border-color: rgba(239, 68, 68, 0.2);">
-                    <div class="toggle-label" style="color: var(--danger);">⚡ Force Shutdown</div>
-                    <label class="switch">
-                        <input type="checkbox" onchange="handleToggle(this, 'shutdown')">
-                        <span class="slider danger"></span>
-                    </label>
+            <!-- Task Manager -->
+            <div class="card glass">
+                <h2>⚙️ Task Manager
+                    <button onclick="fetchTasks()" style="margin-left: auto; background:none; border:none; color: var(--primary); cursor: pointer; font-size: 1.2rem; transition: transform 0.3s;" onmouseover="this.style.transform='rotate(180deg)'" onmouseout="this.style.transform='rotate(0deg)'">↻</button>
+                </h2>
+                <div class="task-list" id="task-list">
+                    <div style="padding: 20px; text-align: center; color: var(--text-muted);">Loading tasks...</div>
                 </div>
             </div>
             
@@ -469,7 +593,7 @@
     <script>
         let serverUrl = "";
         let isRecording = false;
-        const correctPassword = "4171";
+        let isSleeping = false;
         
         // Setup Speech Recognition for mobile browser
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -513,15 +637,31 @@
                 errorEl.innerText = "Please enter the PC IP address.";
                 return;
             }
-            
-            if (pass !== correctPassword) {
-                errorEl.innerText = "Access Denied: Incorrect password.";
+            if (!pass) {
+                errorEl.innerText = "Please enter the password.";
                 return;
             }
 
             serverUrl = ip.startsWith('http') ? ip : 'http://' + ip;
-            errorEl.innerText = "";
             
+            fetch(`${serverUrl}/api/execute`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: "ping", password: pass })
+            }).then(res => {
+                if(res.status === 401) {
+                    errorEl.innerText = "Access Denied: Incorrect password.";
+                } else {
+                    window.sessionPassword = pass;
+                    errorEl.innerText = "";
+                    showDashboard();
+                }
+            }).catch(err => {
+                errorEl.innerText = "Error connecting to server.";
+            });
+        }
+
+        function showDashboard() {
             const loginScreen = document.getElementById('login-screen');
             const dashboard = document.getElementById('dashboard');
             
@@ -537,8 +677,10 @@
                 dashboard.style.opacity = '1';
                 dashboard.style.transform = 'translateY(0)';
                 
-                log(`[Auth] Secure AES-256 connection established with ${serverUrl}`);
+                log(`[Auth] Secure connection established with ${serverUrl}`);
                 log("[System] Ryan AI Status: Working perfectly and fine.");
+                
+                fetchTasks(); // Load tasks initially
             }, 500);
         }
 
@@ -549,7 +691,7 @@
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ command: "disconnect_server", password: correctPassword })
+                body: JSON.stringify({ command: "disconnect_server", password: window.sessionPassword })
             }).catch(() => {}); // ignore error since server dies
 
             // Switch UI back to login
@@ -557,7 +699,7 @@
             const dashboard = document.getElementById('dashboard');
             
             dashboard.style.opacity = '0';
-            dashboard.style.transform = 'translateY(20px)';
+            dashboard.style.transform = 'translateY(30px)';
             
             setTimeout(() => {
                 dashboard.style.display = 'none';
@@ -566,7 +708,28 @@
                 loginScreen.style.opacity = '1';
                 loginScreen.style.transform = 'scale(1)';
                 document.getElementById('password').value = '';
-            }, 500);
+                window.sessionPassword = null;
+            }, 600);
+        }
+
+        function toggleSleep(toSleep) {
+            isSleeping = toSleep;
+            const overlay = document.getElementById('sleep-overlay');
+            
+            if (toSleep) {
+                sendCommand('sleep');
+                overlay.style.display = 'flex';
+                void overlay.offsetWidth;
+                overlay.style.opacity = '1';
+                log("[System] Ryan is now sleeping. Tap Wake Up to resume.");
+            } else {
+                sendCommand('wake');
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 500);
+                log("[System] Ryan has been woken up.");
+            }
         }
 
         function toggleMic() {
@@ -597,15 +760,6 @@
             document.getElementById('mic-status').innerText = "Tap to speak to Ryan";
         }
 
-        function handleToggle(checkbox, command) {
-            if (checkbox.checked) {
-                sendCommand(command);
-                setTimeout(() => {
-                    checkbox.checked = false; // Reset toggle visually
-                }, 800);
-            }
-        }
-
         function sendCommand(cmd) {
             log(`[Terminal] Sending encrypted task: ${cmd}`);
             
@@ -614,15 +768,65 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ command: cmd, password: correctPassword })
+                body: JSON.stringify({ command: cmd, password: window.sessionPassword })
             })
             .then(res => {
                 if (!res.ok) throw new Error("Unauthorized or server error");
                 return res.json();
             })
-            .then(data => log(`[Response] ${data.message}`))
+            .then(data => {
+                log(`[Response] ${data.message}`);
+                if (cmd === 'terminate_all') {
+                    setTimeout(fetchTasks, 2000);
+                }
+            })
             .catch(err => {
                 log(`[Error] Connection failed.`);
+            });
+        }
+        
+        function killTask(pid, name) {
+            log(`[Terminal] Terminating process ${name} (PID: ${pid})...`);
+            fetch(`${serverUrl}/api/execute`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: "kill_task", pid: pid, password: window.sessionPassword })
+            })
+            .then(res => {
+                if(res.ok) {
+                    log(`[Response] Task ${name} killed.`);
+                    setTimeout(fetchTasks, 1000);
+                }
+            });
+        }
+
+        function fetchTasks() {
+            if (!serverUrl || !window.sessionPassword) return;
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted);">Refreshing tasks...</div>`;
+            
+            fetch(`${serverUrl}/api/tasks`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.tasks) {
+                    taskList.innerHTML = '';
+                    if (data.tasks.length === 0) {
+                        taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted);">No active tasks found.</div>`;
+                    } else {
+                        data.tasks.forEach(task => {
+                            const item = document.createElement('div');
+                            item.className = 'task-item';
+                            item.innerHTML = `
+                                <div class="task-name">${task.name} <span style="color:var(--text-muted);font-size:0.8rem;">(${task.pid})</span></div>
+                                <button class="kill-btn" onclick="killTask(${task.pid}, '${task.name}')">Kill</button>
+                            `;
+                            taskList.appendChild(item);
+                        });
+                    }
+                }
+            })
+            .catch(err => {
+                taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--danger);">Failed to load tasks</div>`;
             });
         }
 
