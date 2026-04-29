@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ryan AI Control - Premium</title>
-    <link rel="icon" type="image/png" href="Ryan.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #030014;
-            --panel-bg: rgba(10, 10, 15, 0.6);
-            --panel-border: rgba(255, 255, 255, 0.08);
+            --bg-color: #000000;
+            --panel-bg: rgba(5, 5, 5, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.05);
             --primary: #4f46e5;
             --primary-hover: #4338ca;
             --text-main: #f8fafc;
@@ -594,6 +597,51 @@
         let serverUrl = "";
         let isRecording = false;
         let isSleeping = false;
+        
+        // Register Service Worker for PWA and Notifications
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('Service Worker Registered');
+            }).catch(err => {
+                console.log('Service Worker Registration Failed', err);
+            });
+        }
+
+        // Local Notifications (Time Window Logic)
+        function scheduleLocalNotification(title, body, delayMinutes = 1) {
+            if (!('Notification' in window)) return;
+
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    const targetTime = Date.now() + (delayMinutes * 60 * 1000);
+                    
+                    // Fallback polling for time window logic if browser throttles setTimeout
+                    const checkInterval = setInterval(() => {
+                        const now = Date.now();
+                        // 2-minute time window logic
+                        if (now >= targetTime && now <= targetTime + (2 * 60 * 1000)) {
+                            clearInterval(checkInterval);
+                            
+                            // Try SW notification first for background capability
+                            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                                navigator.serviceWorker.controller.postMessage({
+                                    type: 'SHOW_NOTIFICATION',
+                                    title: title,
+                                    body: body
+                                });
+                            } else {
+                                new Notification(title, { body: body, icon: 'favicon.svg' });
+                            }
+                        } else if (now > targetTime + (2 * 60 * 1000)) {
+                            // Expired
+                            clearInterval(checkInterval);
+                        }
+                    }, 10000); // Check every 10 seconds
+                    
+                    log(`[Notification] Scheduled: "${title}" in ${delayMinutes} minutes.`);
+                }
+            });
+        }
         
         // Setup Speech Recognition for mobile browser
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;

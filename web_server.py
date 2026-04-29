@@ -35,49 +35,78 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path == '/' or self.path == '/index.html':
-            try:
-                html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'index.html')
-                with open(html_path, 'rb') as f:
-                    content = f.read()
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
-                self.wfile.write(content)
-            except Exception as e:
+        if self.path.startswith('/api/'):
+            if self.path == '/api/tasks':
+                try:
+                    import psutil
+                    tasks = []
+                    for proc in psutil.process_iter(['pid', 'name', 'username']):
+                        try:
+                            name = proc.info['name']
+                            username = proc.info.get('username') or ''
+                            
+                            is_user_proc = username and ('SYSTEM' not in username and 'SERVICE' not in username and 'AUTHORITY' not in username)
+                            
+                            sys_procs = ['explorer.exe', 'cmd.exe', 'conhost.exe', 'svchost.exe', 'taskhostw.exe', 'runtimebroker.exe', 'applicationframehost.exe', 'startmenuexperiencehost.exe', 'searchapp.exe', 'textinputhost.exe', 'ctfmon.exe', 'dllhost.exe', 'sihost.exe']
+                            
+                            if name and name.endswith('.exe') and is_user_proc and name.lower() not in sys_procs:
+                                tasks.append({"pid": proc.info['pid'], "name": name})
+                        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                            pass
+                    
+                    # filter unique names to keep list concise
+                    unique_tasks = {}
+                    for t in tasks:
+                        if t['name'] not in unique_tasks:
+                            unique_tasks[t['name']] = t
+                    
+                    self.send_response(200)
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"tasks": list(unique_tasks.values())}).encode('utf-8'))
+                except Exception as e:
+                    self.send_response(500)
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+            else:
                 self.send_response(404)
                 self.end_headers()
-                self.wfile.write(b"index.html not found.")
-        elif self.path == '/api/tasks':
-            try:
-                import psutil
-                tasks = []
-                for proc in psutil.process_iter(['pid', 'name']):
-                    try:
-                        name = proc.info['name']
-                        if name and name.endswith('.exe') and name not in ['svchost.exe', 'System Idle Process', 'System', 'Registry', 'smss.exe', 'csrss.exe', 'wininit.exe', 'services.exe', 'lsass.exe', 'winlogon.exe']:
-                            tasks.append({"pid": proc.info['pid'], "name": name})
-                    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                        pass
-                
-                # filter unique names to keep list concise
-                unique_tasks = {}
-                for t in tasks:
-                    if t['name'] not in unique_tasks:
-                        unique_tasks[t['name']] = t
-                
-                self.send_response(200)
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.send_header('Content-type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps({"tasks": list(unique_tasks.values())}).encode('utf-8'))
-            except Exception as e:
-                self.send_response(500)
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
         else:
-            self.send_response(404)
-            self.end_headers()
+            # Serve static files
+            file_path = self.path
+            if file_path == '/':
+                file_path = '/index.html'
+            
+            # Prevent directory traversal
+            safe_path = os.path.basename(file_path.strip('/'))
+            if not safe_path:
+                safe_path = 'index.html'
+                
+            full_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), safe_path)
+            
+            if os.path.exists(full_path):
+                content_type = 'text/plain'
+                if safe_path.endswith('.html'): content_type = 'text/html'
+                elif safe_path.endswith('.css'): content_type = 'text/css'
+                elif safe_path.endswith('.js'): content_type = 'application/javascript'
+                elif safe_path.endswith('.json'): content_type = 'application/json'
+                elif safe_path.endswith('.svg'): content_type = 'image/svg+xml'
+                elif safe_path.endswith('.png'): content_type = 'image/png'
+                
+                try:
+                    with open(full_path, 'rb') as f:
+                        content = f.read()
+                    self.send_response(200)
+                    self.send_header('Content-type', content_type)
+                    self.end_headers()
+                    self.wfile.write(content)
+                except Exception as e:
+                    self.send_response(500)
+                    self.end_headers()
+            else:
+                self.send_response(404)
+                self.end_headers()
 
     def do_POST(self):
         if self.path == '/api/execute':
