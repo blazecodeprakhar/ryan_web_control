@@ -231,6 +231,16 @@ def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=50
     print(f"==================================================")
     
     try:
+        import qrcode
+        qr = qrcode.QRCode()
+        qr.add_data(f"{IP}:{port}|4171")
+        qr.make(fit=True)
+        print("Scan this QR code to connect instantly:")
+        qr.print_ascii(invert=True)
+    except ImportError:
+        print("Tip: Install 'qrcode' (pip install qrcode) to see a connection QR code here.")
+    
+    try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass

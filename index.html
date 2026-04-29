@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" href="favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         :root {
             --bg-color: #000000;
@@ -39,7 +41,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.15), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.15), transparent 25%);
             background-attachment: fixed;
@@ -81,8 +83,13 @@
         }
 
         @keyframes glow {
-            from { text-shadow: 0 0 10px rgba(168,85,247,0.2); }
-            to { text-shadow: 0 0 20px rgba(99,102,241,0.5); }
+            from {
+                text-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+            }
+
+            to {
+                text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+            }
         }
 
         #login-screen p {
@@ -204,9 +211,20 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
 
         .grid {
@@ -229,7 +247,7 @@
             gap: 12px;
             color: #fff;
             font-weight: 600;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 15px;
         }
 
@@ -269,12 +287,13 @@
         .action-btn.danger {
             color: #fca5a5;
         }
+
         .action-btn.danger:hover {
             background: rgba(239, 68, 68, 0.15);
             border-color: var(--danger);
             color: #fff;
         }
-        
+
         .action-btn.sleep-btn {
             background: linear-gradient(to right, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
             border-color: rgba(168, 85, 247, 0.3);
@@ -293,28 +312,28 @@
             overflow-y: auto;
             border-radius: 12px;
             background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
+
         .task-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
+
         .task-item:last-child {
             border-bottom: none;
         }
-        
+
         .task-name {
             font-size: 0.95rem;
             font-family: monospace;
             color: #e2e8f0;
             word-break: break-all;
         }
-        
+
         .kill-btn {
             background: rgba(239, 68, 68, 0.2);
             color: #fca5a5;
@@ -326,7 +345,7 @@
             transition: all 0.2s;
             font-weight: 600;
         }
-        
+
         .kill-btn:hover {
             background: var(--danger);
             color: white;
@@ -372,6 +391,7 @@
         .mic-btn:hover {
             transform: scale(1.05);
         }
+
         .mic-btn:hover::before {
             opacity: 0.6;
             inset: -10px;
@@ -382,14 +402,26 @@
             background: linear-gradient(135deg, #ef4444, #f59e0b);
             animation: pulse-recording 1.5s infinite;
         }
+
         .mic-btn.recording::before {
             background: linear-gradient(135deg, #ef4444, #f59e0b);
         }
 
         @keyframes pulse-recording {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
         .log-window {
@@ -401,13 +433,13 @@
             font-family: 'Consolas', monospace;
             font-size: 0.9rem;
             color: #a7f3d0;
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .log-entry {
             margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             padding-bottom: 8px;
             line-height: 1.4;
         }
@@ -422,14 +454,29 @@
         }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 8px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
 
         #sleep-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(15px);
             z-index: 1000;
@@ -447,7 +494,7 @@
             font-size: 2.5rem;
             font-weight: 800;
             letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
         .wake-hero-btn {
@@ -467,9 +514,9 @@
             transform: scale(1.05);
             box-shadow: 0 20px 45px rgba(16, 185, 129, 0.6);
         }
-
     </style>
 </head>
+
 <body>
 
     <!-- Sleep Overlay -->
@@ -482,20 +529,23 @@
     <div id="login-screen" class="glass">
         <h1>Ryan Premium</h1>
         <p>Establish a secure local connection to AI Terminal</p>
-        
+
         <div class="input-group">
             <label for="local-ip">Local PC Address (IP:Port)</label>
             <input type="text" id="local-ip" placeholder="e.g. 192.168.1.5:5000">
         </div>
-        
+
         <div class="input-group">
             <label for="password">Connection Password</label>
             <input type="password" id="password" placeholder="Enter Secure Password">
         </div>
-        
+
         <div class="error-msg" id="login-error"></div>
         
-        <button class="main-btn" onclick="attemptLogin()">Connect to System</button>
+        <button class="main-btn" onclick="attemptLogin()" style="margin-bottom: 15px;">Connect to System</button>
+        <button class="action-btn accent" onclick="scanQR()" style="justify-content: center; width: 100%;">📷 Scan QR Code</button>
+        
+        <div id="reader" style="width: 100%; margin-top: 15px; border-radius: 12px; overflow: hidden; display: none;"></div>
     </div>
 
     <!-- Dashboard -->
@@ -506,7 +556,8 @@
                 <div class="status-dot"></div>
                 AI Status: Online & Secured
             </div>
-            <button class="action-btn danger" onclick="disconnect()" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">Disconnect Server</button>
+            <button class="action-btn danger" onclick="disconnect()"
+                style="width: auto; padding: 10px 20px; font-size: 0.9rem;">Disconnect Server</button>
         </div>
 
         <div class="grid">
@@ -515,16 +566,22 @@
                 <h2>🎤 AI Voice Assistant</h2>
                 <div class="mic-container">
                     <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="22"></line>
+                        </svg>
                     </button>
-                    <p style="margin-top: 25px; font-size: 1.1rem; color: var(--text-muted); font-weight: 300;" id="mic-status">Tap to speak to Ryan</p>
+                    <p style="margin-top: 25px; font-size: 1.1rem; color: var(--text-muted); font-weight: 300;"
+                        id="mic-status">Tap to speak to Ryan</p>
                 </div>
             </div>
 
             <!-- Workstations -->
             <div class="card glass">
                 <h2>🚀 Workstations & Modes</h2>
-                
+
                 <button class="action-btn accent" onclick="sendCommand('workstation 1')">
                     <span>💻 Activate Workstation 1</span>
                     <span>→</span>
@@ -545,36 +602,45 @@
 
             <!-- System Controls -->
             <div class="card glass">
-                <h2>💻 Terminal Controls</h2>
-                
+                <h2>Terminal Controls</h2>
+
                 <div class="btn-row" style="margin-bottom: 10px;">
-                    <button class="action-btn" onclick="sendCommand('lock_pc')" style="flex: 1; justify-content: center;">
-                        <span>🔒 Lock PC</span>
+                    <button class="action-btn" onclick="sendCommand('lock_pc')"
+                        style="flex: 1; justify-content: center;">
+                        <span>Lock PC</span>
                     </button>
-                    <button class="action-btn accent" onclick="sendCommand('unlock_pc')" style="flex: 1; justify-content: center;">
-                        <span>🔓 Unlock PC</span>
+                    <button class="action-btn accent" onclick="sendCommand('unlock_pc')"
+                        style="flex: 1; justify-content: center;">
+                        <span>Unlock PC</span>
                     </button>
                 </div>
 
-                <button class="action-btn sleep-btn" onclick="if(confirm('Are you sure you want to put the OS to sleep?')) sendCommand('system_sleep')" style="margin-bottom: 10px;">
-                    <span>💤 Put System to Sleep</span>
+                <button class="action-btn sleep-btn"
+                    onclick="if(confirm('Are you sure you want to put the OS to sleep?')) sendCommand('system_sleep')"
+                    style="margin-bottom: 10px;">
+                    <span>Put System to Sleep</span>
                     <span>⏾</span>
                 </button>
-                
+
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px; margin-bottom: 5px;">
                     <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">Volume Control</div>
                     <div class="btn-row">
-                        <button class="action-btn" style="justify-content: center;" onclick="sendCommand('volume_down')">🔉 Down</button>
-                        <button class="action-btn" style="justify-content: center;" onclick="sendCommand('mute_toggle')">🔇 Mute</button>
-                        <button class="action-btn" style="justify-content: center;" onclick="sendCommand('volume_up')">🔊 Up</button>
+                        <button class="action-btn" style="justify-content: center;"
+                            onclick="sendCommand('volume_down')">🔉 Down</button>
+                        <button class="action-btn" style="justify-content: center;"
+                            onclick="sendCommand('mute_toggle')">🔇 Mute</button>
+                        <button class="action-btn" style="justify-content: center;"
+                            onclick="sendCommand('volume_up')">🔊 Up</button>
                     </div>
                 </div>
 
-                <button class="action-btn danger" onclick="if(confirm('Are you sure you want to terminate all apps?')) sendCommand('terminate_all')">
+                <button class="action-btn danger"
+                    onclick="if(confirm('Are you sure you want to terminate all apps?')) sendCommand('terminate_all')">
                     <span>🛑 Terminate All Tasks</span>
                 </button>
 
-                <button class="action-btn danger" onclick="if(confirm('Are you sure you want to shut down the PC?')) sendCommand('shutdown')">
+                <button class="action-btn danger"
+                    onclick="if(confirm('Are you sure you want to shut down the PC?')) sendCommand('shutdown')">
                     <span>⚡ Force Shutdown PC</span>
                 </button>
             </div>
@@ -582,13 +648,16 @@
             <!-- Task Manager -->
             <div class="card glass">
                 <h2>⚙️ Task Manager
-                    <button onclick="fetchTasks()" style="margin-left: auto; background:none; border:none; color: var(--primary); cursor: pointer; font-size: 1.2rem; transition: transform 0.3s;" onmouseover="this.style.transform='rotate(180deg)'" onmouseout="this.style.transform='rotate(0deg)'">↻</button>
+                    <button onclick="fetchTasks()"
+                        style="margin-left: auto; background:none; border:none; color: var(--primary); cursor: pointer; font-size: 1.2rem; transition: transform 0.3s;"
+                        onmouseover="this.style.transform='rotate(180deg)'"
+                        onmouseout="this.style.transform='rotate(0deg)'">↻</button>
                 </h2>
                 <div class="task-list" id="task-list">
                     <div style="padding: 20px; text-align: center; color: var(--text-muted);">Loading tasks...</div>
                 </div>
             </div>
-            
+
             <!-- System Logs -->
             <div class="card glass" style="grid-column: 1 / -1;">
                 <h2>📡 Secured Connection Logs</h2>
@@ -603,7 +672,7 @@
         let serverUrl = "";
         let isRecording = false;
         let isSleeping = false;
-        
+
         // Register Service Worker for PWA and Notifications
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').then(reg => {
@@ -620,14 +689,14 @@
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
                     const targetTime = Date.now() + (delayMinutes * 60 * 1000);
-                    
+
                     // Fallback polling for time window logic if browser throttles setTimeout
                     const checkInterval = setInterval(() => {
                         const now = Date.now();
                         // 2-minute time window logic
                         if (now >= targetTime && now <= targetTime + (2 * 60 * 1000)) {
                             clearInterval(checkInterval);
-                            
+
                             // Try SW notification first for background capability
                             if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                                 navigator.serviceWorker.controller.postMessage({
@@ -643,12 +712,12 @@
                             clearInterval(checkInterval);
                         }
                     }, 10000); // Check every 10 seconds
-                    
+
                     log(`[Notification] Scheduled: "${title}" in ${delayMinutes} minutes.`);
                 }
             });
         }
-        
+
         // Setup Speech Recognition for mobile browser
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
@@ -658,19 +727,19 @@
             recognition.interimResults = false;
             recognition.lang = 'en-US';
 
-            recognition.onresult = function(event) {
+            recognition.onresult = function (event) {
                 const text = event.results[0][0].transcript;
                 log(`[Audio] Heard: "${text}"`);
                 sendCommand(text); // Send directly to Ryan AI
                 stopMicUI();
             };
 
-            recognition.onerror = function(event) {
+            recognition.onerror = function (event) {
                 log(`[Audio Error] ${event.error}`);
                 stopMicUI();
             };
 
-            recognition.onend = function() {
+            recognition.onend = function () {
                 stopMicUI();
             };
         }
@@ -682,11 +751,46 @@
             }
         });
 
+        function scanQR() {
+            const reader = document.getElementById('reader');
+            const errorEl = document.getElementById('login-error');
+            reader.style.display = 'block';
+            errorEl.innerText = "";
+            
+            const html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText, decodedResult) => {
+                    html5QrCode.stop().then(() => {
+                        reader.style.display = 'none';
+                    });
+                    
+                    const parts = decodedText.split('|');
+                    if (parts.length >= 2) {
+                        document.getElementById('local-ip').value = parts[0].replace('http://', '');
+                        document.getElementById('password').value = parts[1];
+                        if (typeof log === 'function') log("[QR] Successfully scanned QR code. Connecting...");
+                        attemptLogin();
+                    } else {
+                        errorEl.innerText = "Invalid QR Code format.";
+                    }
+                },
+                (errorMessage) => {
+                    // parse error, ignore
+                }
+            ).catch((err) => {
+                console.error(err);
+                errorEl.innerText = "Camera access failed or permission denied.";
+                reader.style.display = 'none';
+            });
+        }
+
         function attemptLogin() {
             const ip = document.getElementById('local-ip').value;
             const pass = document.getElementById('password').value;
             const errorEl = document.getElementById('login-error');
-            
+
             if (!ip) {
                 errorEl.innerText = "Please enter the PC IP address.";
                 return;
@@ -697,13 +801,13 @@
             }
 
             serverUrl = ip.startsWith('http') ? ip : 'http://' + ip;
-            
+
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ command: "ping", password: pass })
             }).then(res => {
-                if(res.status === 401) {
+                if (res.status === 401) {
                     errorEl.innerText = "Access Denied: Incorrect password.";
                 } else {
                     window.sessionPassword = pass;
@@ -718,43 +822,43 @@
         function showDashboard() {
             const loginScreen = document.getElementById('login-screen');
             const dashboard = document.getElementById('dashboard');
-            
+
             loginScreen.style.opacity = '0';
             loginScreen.style.transform = 'scale(0.95)';
-            
+
             setTimeout(() => {
                 loginScreen.style.display = 'none';
                 dashboard.style.display = 'block';
-                
+
                 void dashboard.offsetWidth; // Trigger reflow
-                
+
                 dashboard.style.opacity = '1';
                 dashboard.style.transform = 'translateY(0)';
-                
+
                 log(`[Auth] Secure connection established with ${serverUrl}`);
                 log("[System] Ryan AI Status: Working perfectly and fine.");
-                
+
                 fetchTasks(); // Load tasks initially
             }, 500);
         }
 
         function disconnect() {
             log("[Auth] Sending disconnect signal to Web Server...");
-            
+
             // Send command to kill the python server
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ command: "disconnect_server", password: window.sessionPassword })
-            }).catch(() => {}); // ignore error since server dies
+            }).catch(() => { }); // ignore error since server dies
 
             // Switch UI back to login
             const loginScreen = document.getElementById('login-screen');
             const dashboard = document.getElementById('dashboard');
-            
+
             dashboard.style.opacity = '0';
             dashboard.style.transform = 'translateY(30px)';
-            
+
             setTimeout(() => {
                 dashboard.style.display = 'none';
                 loginScreen.style.display = 'block';
@@ -769,7 +873,7 @@
         function toggleSleep(toSleep) {
             isSleeping = toSleep;
             const overlay = document.getElementById('sleep-overlay');
-            
+
             if (toSleep) {
                 sendCommand('sleep');
                 overlay.style.display = 'flex';
@@ -799,7 +903,7 @@
                     document.getElementById('mic-btn').classList.add('recording');
                     document.getElementById('mic-status').innerText = "Listening... Speak now";
                     log("[Audio] Phone microphone is active. Speak your command.");
-                } catch(e) {
+                } catch (e) {
                     log(`[Error] Could not start mic: ${e}`);
                 }
             } else {
@@ -816,7 +920,7 @@
 
         function sendCommand(cmd) {
             log(`[Terminal] Sending encrypted task: ${cmd}`);
-            
+
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
                 headers: {
@@ -824,21 +928,21 @@
                 },
                 body: JSON.stringify({ command: cmd, password: window.sessionPassword })
             })
-            .then(res => {
-                if (!res.ok) throw new Error("Unauthorized or server error");
-                return res.json();
-            })
-            .then(data => {
-                log(`[Response] ${data.message}`);
-                if (cmd === 'terminate_all') {
-                    setTimeout(fetchTasks, 2000);
-                }
-            })
-            .catch(err => {
-                log(`[Error] Connection failed.`);
-            });
+                .then(res => {
+                    if (!res.ok) throw new Error("Unauthorized or server error");
+                    return res.json();
+                })
+                .then(data => {
+                    log(`[Response] ${data.message}`);
+                    if (cmd === 'terminate_all') {
+                        setTimeout(fetchTasks, 2000);
+                    }
+                })
+                .catch(err => {
+                    log(`[Error] Connection failed.`);
+                });
         }
-        
+
         function killTask(pid, name) {
             log(`[Terminal] Terminating process ${name} (PID: ${pid})...`);
             fetch(`${serverUrl}/api/execute`, {
@@ -846,42 +950,42 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ command: "kill_task", pid: pid, password: window.sessionPassword })
             })
-            .then(res => {
-                if(res.ok) {
-                    log(`[Response] Task ${name} killed.`);
-                    setTimeout(fetchTasks, 1000);
-                }
-            });
+                .then(res => {
+                    if (res.ok) {
+                        log(`[Response] Task ${name} killed.`);
+                        setTimeout(fetchTasks, 1000);
+                    }
+                });
         }
 
         function fetchTasks() {
             if (!serverUrl || !window.sessionPassword) return;
             const taskList = document.getElementById('task-list');
             taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted);">Refreshing tasks...</div>`;
-            
+
             fetch(`${serverUrl}/api/tasks`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.tasks) {
-                    taskList.innerHTML = '';
-                    if (data.tasks.length === 0) {
-                        taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted);">No active tasks found.</div>`;
-                    } else {
-                        data.tasks.forEach(task => {
-                            const item = document.createElement('div');
-                            item.className = 'task-item';
-                            item.innerHTML = `
+                .then(res => res.json())
+                .then(data => {
+                    if (data.tasks) {
+                        taskList.innerHTML = '';
+                        if (data.tasks.length === 0) {
+                            taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted);">No active tasks found.</div>`;
+                        } else {
+                            data.tasks.forEach(task => {
+                                const item = document.createElement('div');
+                                item.className = 'task-item';
+                                item.innerHTML = `
                                 <div class="task-name">${task.name} <span style="color:var(--text-muted);font-size:0.8rem;">(${task.pid})</span></div>
                                 <button class="kill-btn" onclick="killTask(${task.pid}, '${task.name}')">Kill</button>
                             `;
-                            taskList.appendChild(item);
-                        });
+                                taskList.appendChild(item);
+                            });
+                        }
                     }
-                }
-            })
-            .catch(err => {
-                taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--danger);">Failed to load tasks</div>`;
-            });
+                })
+                .catch(err => {
+                    taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--danger);">Failed to load tasks</div>`;
+                });
         }
 
         function log(msg) {
@@ -901,4 +1005,5 @@
         });
     </script>
 </body>
+
 </html>
