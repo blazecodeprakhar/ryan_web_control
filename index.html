@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Web Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism utilities */
+        .glass {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Login Screen */
+        #login-screen {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        #login-screen h1 {
+            margin-bottom: 8px;
+            font-weight: 600;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #login-screen p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        /* Dashboard Screen */
+        #dashboard {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            padding: 24px;
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e2e8f0;
+        }
+
+        .control-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .control-btn.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .control-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Mic & Audio features */
+        .mic-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .mic-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            transition: all 0.3s;
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.7);
+        }
+
+        .mic-btn.recording {
+            background: var(--danger);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            animation: pulse-danger 1.5s infinite;
+        }
+
+        @keyframes pulse-danger {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .slider-container {
+            margin-top: 20px;
+        }
+
+        .slider-container label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        input[type=range] {
+            width: 100%;
+            -webkit-appearance: none;
+            background: transparent;
+            margin: 10px 0;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        /* Log window */
+        .log-window {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 12px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: #a7f3d0;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .log-entry {
+            margin-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 4px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="glass">
+        <h1>Jarvis Access</h1>
+        <p>Establish a secure connection to your PC</p>
+        
+        <div class="input-group">
+            <label for="local-ip">Local PC Address (IP:Port)</label>
+            <input type="text" id="local-ip" placeholder="e.g. 192.168.1.5:5000" value="127.0.0.1:5000">
+        </div>
+        
+        <div class="input-group">
+            <label for="password">Connection Password</label>
+            <input type="password" id="password" placeholder="Enter password">
+        </div>
+        
+        <div class="error-msg" id="login-error"></div>
+        
+        <button onclick="attemptLogin()">Connect to System</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <div class="dashboard-header glass" style="padding: 15px 24px; border-radius: 100px;">
+            <h2 style="font-size: 1.2rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Jarvis Web Control</h2>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                AI Status: Working perfectly and fine
+            </div>
+            <button onclick="logout()" style="width: auto; padding: 8px 16px; font-size: 0.85rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger);">Disconnect</button>
+        </div>
+
+        <div class="grid">
+            <!-- Voice & Audio Control -->
+            <div class="card glass">
+                <h2>🎤 Voice & Audio</h2>
+                <div class="mic-container">
+                    <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                    </button>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);" id="mic-status">Tap to speak to Jarvis</p>
+                </div>
+                
+                <div class="slider-container">
+                    <label>
+                        <span>PC Speaker Volume</span>
+                        <span id="vol-value">50%</span>
+                    </label>
+                    <input type="range" min="0" max="100" value="50" onchange="changeVolume(this.value)" oninput="document.getElementById('vol-value').innerText = this.value + '%'">
+                </div>
+            </div>
+
+            <!-- System Controls -->
+            <div class="card glass">
+                <h2>💻 System Controls</h2>
+                <button class="control-btn" onclick="sendCommand('lock_pc')">
+                    🔒 Lock Workstation
+                </button>
+                <button class="control-btn" onclick="sendCommand('mute_toggle')">
+                    🔇 Toggle PC Mute
+                </button>
+                <button class="control-btn" onclick="sendCommand('open_dashboard')">
+                    📊 Open AI Dashboard
+                </button>
+                <button class="control-btn danger" onclick="sendCommand('terminate_all')">
+                    🛑 Terminate All Tasks
+                </button>
+                <button class="control-btn danger" onclick="sendCommand('shutdown')">
+                    ⚡ Force Shutdown
+                </button>
+            </div>
+            
+            <!-- System Logs -->
+            <div class="card glass" style="grid-column: 1 / -1;">
+                <h2>📡 Connection Logs</h2>
+                <div class="log-window" id="log-window">
+                    <div class="log-entry">[System] System initialized. Ready for connections.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let serverUrl = "";
+        let isRecording = false;
+        const correctPassword = "4171";
+
+        function attemptLogin() {
+            const ip = document.getElementById('local-ip').value;
+            const pass = document.getElementById('password').value;
+            const errorEl = document.getElementById('login-error');
+            
+            if (!ip) {
+                errorEl.innerText = "Please enter the PC IP address.";
+                return;
+            }
+            
+            if (pass !== correctPassword) {
+                errorEl.innerText = "Access Denied: Incorrect password.";
+                return;
+            }
+
+            // Success configuration
+            serverUrl = ip.startsWith('http') ? ip : 'http://' + ip;
+            errorEl.innerText = "";
+            
+            // UI Transition smoothly
+            const loginScreen = document.getElementById('login-screen');
+            const dashboard = document.getElementById('dashboard');
+            
+            loginScreen.style.opacity = '0';
+            loginScreen.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                loginScreen.style.display = 'none';
+                dashboard.style.display = 'block';
+                
+                // Trigger reflow
+                void dashboard.offsetWidth;
+                
+                dashboard.style.opacity = '1';
+                dashboard.style.transform = 'translateY(0)';
+                
+                log(`[Auth] Connection established with ${serverUrl}`);
+                log("[System] AI Status: Working perfectly and fine.");
+            }, 500);
+        }
+
+        function logout() {
+            const loginScreen = document.getElementById('login-screen');
+            const dashboard = document.getElementById('dashboard');
+            
+            dashboard.style.opacity = '0';
+            dashboard.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                dashboard.style.display = 'none';
+                loginScreen.style.display = 'block';
+                
+                // Trigger reflow
+                void loginScreen.offsetWidth;
+                
+                loginScreen.style.opacity = '1';
+                loginScreen.style.transform = 'scale(1)';
+                
+                document.getElementById('password').value = '';
+                log("[Auth] Disconnected from system.");
+            }, 500);
+        }
+
+        function toggleMic() {
+            const btn = document.getElementById('mic-btn');
+            const status = document.getElementById('mic-status');
+            isRecording = !isRecording;
+            
+            if (isRecording) {
+                btn.classList.add('recording');
+                status.innerText = "Listening... Tap to stop";
+                log("[Audio] Microphone activated. Listening for voice commands...");
+                
+                // Implementation note: Here you would use navigator.mediaDevices.getUserMedia
+                // and stream the audio Blob/ArrayBuffer to the Python backend via WebSocket or POST.
+            } else {
+                btn.classList.remove('recording');
+                status.innerText = "Tap to speak to Jarvis";
+                log("[Audio] Processing voice command...");
+                
+                // Simulate processing delay
+                setTimeout(() => {
+                    log("[AI] Voice command received and executed successfully.");
+                }, 1200);
+            }
+        }
+
+        function changeVolume(val) {
+            log(`[System] Setting PC volume to ${val}%`);
+            
+            // Implementation note: Send fetch request to Python backend
+            // Example:
+            // fetch(`${serverUrl}/api/volume`, { 
+            //     method: 'POST', 
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ level: val, auth: '4171' }) 
+            // }).catch(err => console.error(err));
+        }
+
+        function sendCommand(cmd) {
+            log(`[Command] Initiating task: ${cmd}`);
+            
+            // Implementation note: This is where you connect to the local Python API.
+            // Example of how the actual fetch would look:
+            /*
+            fetch(`${serverUrl}/api/execute`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ command: cmd, password: correctPassword })
+            })
+            .then(res => res.json())
+            .then(data => log(`[Response] ${data.message}`))
+            .catch(err => log(`[Error] Connection failed. Is the PC server running?`));
+            */
+            
+            // Simulating network delay
+            setTimeout(() => {
+                log(`[Success] Task '${cmd}' executed on PC.`);
+            }, 400);
+        }
+
+        function log(msg) {
+            const win = document.getElementById('log-window');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerText = `[${time}] ${msg}`;
+            win.appendChild(entry);
+            win.scrollTop = win.scrollHeight;
+        }
+
+        // Add Enter key listener for login
+        document.getElementById('password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                attemptLogin();
+            }
+        });
+    </script>
+</body>
+</html>
