@@ -375,7 +375,7 @@
         
         <div class="input-group">
             <label for="local-ip">Local PC Address (IP:Port)</label>
-            <input type="text" id="local-ip" placeholder="e.g. 192.168.1.5:5000" value="127.0.0.1:5000">
+            <input type="text" id="local-ip" placeholder="Look at your PC terminal (e.g. 192.168.1.5:5000)">
         </div>
         
         <div class="input-group">
@@ -479,6 +479,13 @@
         let isRecording = false;
         let mediaStream = null;
         const correctPassword = "4171";
+
+        // Auto-fill IP if accessed directly
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.location.hostname !== 'blazecodeprakhar.github.io' && window.location.hostname !== 'localhost') {
+                document.getElementById('local-ip').value = window.location.host;
+            }
+        });
 
         function attemptLogin() {
             const ip = document.getElementById('local-ip').value;
