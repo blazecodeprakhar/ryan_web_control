@@ -481,40 +481,29 @@
             if (isRecording) {
                 btn.classList.add('recording');
                 status.innerText = "Listening... Tap to stop";
-                log("[Audio] Microphone activated. Listening for voice commands...");
-                
-                // Implementation note: Here you would use navigator.mediaDevices.getUserMedia
-                // and stream the audio Blob/ArrayBuffer to the Python backend via WebSocket or POST.
+                log("[Audio] Requesting PC to listen...");
+                sendCommand('listen_command');
             } else {
                 btn.classList.remove('recording');
                 status.innerText = "Tap to speak to Jarvis";
-                log("[Audio] Processing voice command...");
-                
-                // Simulate processing delay
-                setTimeout(() => {
-                    log("[AI] Voice command received and executed successfully.");
-                }, 1200);
+                log("[Audio] Stopped listening.");
             }
         }
 
         function changeVolume(val) {
             log(`[System] Setting PC volume to ${val}%`);
-            
-            // Implementation note: Send fetch request to Python backend
-            // Example:
-            // fetch(`${serverUrl}/api/volume`, { 
-            //     method: 'POST', 
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ level: val, auth: '4171' }) 
-            // }).catch(err => console.error(err));
+            fetch(`${serverUrl}/api/execute`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: 'set_volume', value: val, password: correctPassword }) 
+            }).then(res => res.json())
+              .then(data => log(`[Response] ${data.message}`))
+              .catch(err => log(`[Error] Connection failed.`));
         }
 
         function sendCommand(cmd) {
             log(`[Command] Initiating task: ${cmd}`);
             
-            // Implementation note: This is where you connect to the local Python API.
-            // Example of how the actual fetch would look:
-            /*
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
                 headers: {
@@ -522,15 +511,12 @@
                 },
                 body: JSON.stringify({ command: cmd, password: correctPassword })
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error("Unauthorized or server error");
+                return res.json();
+            })
             .then(data => log(`[Response] ${data.message}`))
             .catch(err => log(`[Error] Connection failed. Is the PC server running?`));
-            */
-            
-            // Simulating network delay
-            setTimeout(() => {
-                log(`[Success] Task '${cmd}' executed on PC.`);
-            }, 400);
         }
 
         function log(msg) {
