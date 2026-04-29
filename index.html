@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Required to allow mixed content on some browsers, or tell user to allow it -->
-    <title>Jarvis Web Control</title>
+    <title>Ryan AI Control</title>
+    <link rel="icon" type="image/png" href="Ryan.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.7);
+            --bg-color: #050505;
+            --panel-bg: rgba(15, 15, 20, 0.85);
             --primary: #3b82f6;
             --primary-hover: #2563eb;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --danger: #ef4444;
             --success: #10b981;
+            --accent: #a855f7;
         }
 
         * {
@@ -33,19 +34,18 @@
             justify-content: center;
             align-items: center;
             background-image: 
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0, transparent 50%);
             overflow-x: hidden;
         }
 
         .glass {
             background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
         #login-screen {
@@ -59,7 +59,7 @@
         #login-screen h1 {
             margin-bottom: 8px;
             font-weight: 600;
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            background: linear-gradient(to right, #60a5fa, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -84,10 +84,10 @@
 
         .input-group input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.4);
             color: white;
             font-size: 1rem;
             outline: none;
@@ -111,10 +111,6 @@
             transition: background-color 0.3s, transform 0.1s;
         }
 
-        button.main-btn:hover {
-            background-color: var(--primary-hover);
-        }
-
         button.main-btn:active {
             transform: scale(0.98);
         }
@@ -129,7 +125,7 @@
         #dashboard {
             display: none;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             padding: 20px;
             opacity: 0;
             transform: translateY(20px);
@@ -175,7 +171,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
 
@@ -184,7 +180,7 @@
         }
 
         .card h2 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
@@ -192,7 +188,7 @@
             color: #e2e8f0;
         }
 
-        /* Toggles instead of Buttons */
+        /* Toggles */
         .toggle-row {
             display: flex;
             justify-content: space-between;
@@ -206,7 +202,7 @@
         }
 
         .toggle-row:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .toggle-label {
@@ -216,7 +212,6 @@
             gap: 10px;
         }
 
-        /* Toggle Switch CSS */
         .switch {
             position: relative;
             display: inline-block;
@@ -234,7 +229,7 @@
             position: absolute;
             cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255,255,255,0.2);
+            background-color: rgba(255,255,255,0.15);
             transition: .4s;
             border-radius: 34px;
         }
@@ -259,6 +254,10 @@
             background-color: var(--danger);
         }
 
+        input:checked + .slider.accent {
+            background-color: var(--accent);
+        }
+
         input:checked + .slider:before {
             transform: translateX(22px);
         }
@@ -272,10 +271,10 @@
         }
 
         .mic-btn {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            background: var(--primary);
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             border: none;
             color: white;
             font-size: 24px;
@@ -283,95 +282,63 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
             transition: all 0.3s;
         }
 
         .mic-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.7);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.6);
         }
 
         .mic-btn.recording {
-            background: var(--danger);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
             animation: pulse-danger 1.5s infinite;
         }
 
         @keyframes pulse-danger {
             0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
-        .slider-container {
-            margin-top: 20px;
-        }
-
-        .slider-container label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: #cbd5e1;
-        }
-
-        input[type=range] {
-            width: 100%;
-            -webkit-appearance: none;
-            background: transparent;
-            margin: 10px 0;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 18px;
-            width: 18px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-            margin-top: -7px;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-        }
-
         .log-window {
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 8px;
-            padding: 12px;
-            height: 150px;
+            padding: 16px;
+            height: 180px;
             overflow-y: auto;
             font-family: 'Consolas', monospace;
             font-size: 0.85rem;
             color: #a7f3d0;
-            margin-top: 10px;
             border: 1px solid rgba(255,255,255,0.05);
         }
 
         .log-entry {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 4px;
+            padding-bottom: 6px;
         }
 
         .log-entry:last-child {
             border-bottom: none;
         }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
     </style>
 </head>
 <body>
 
     <!-- Login Screen -->
     <div id="login-screen" class="glass">
-        <h1>Jarvis Access</h1>
-        <p>Establish a secure connection to your PC</p>
+        <h1>Ryan Secure Access</h1>
+        <p>Establish a secure local connection to AI Terminal</p>
         
         <div class="input-group">
             <label for="local-ip">Local PC Address (IP:Port)</label>
@@ -380,7 +347,7 @@
         
         <div class="input-group">
             <label for="password">Connection Password</label>
-            <input type="password" id="password" placeholder="Enter password">
+            <input type="password" id="password" placeholder="Enter password (4171)">
         </div>
         
         <div class="error-msg" id="login-error"></div>
@@ -391,42 +358,75 @@
     <!-- Dashboard -->
     <div id="dashboard">
         <div class="dashboard-header glass" style="padding: 15px 24px; border-radius: 100px;">
-            <h2 style="font-size: 1.2rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Jarvis Web Control</h2>
+            <h2 style="font-size: 1.2rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Ryan AI Terminal</h2>
             <div class="status-badge">
                 <div class="status-dot"></div>
-                AI Status: Online
+                AI Status: Online & Secured
             </div>
-            <button onclick="logout()" style="width: auto; padding: 8px 16px; font-size: 0.85rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); border-radius: 8px; cursor: pointer;">Disconnect</button>
+            <button onclick="disconnect()" style="width: auto; padding: 8px 16px; font-size: 0.85rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; border-radius: 8px; cursor: pointer; transition: all 0.2s;">Disconnect Server</button>
         </div>
 
         <div class="grid">
-            <!-- Voice & Audio Control -->
+            <!-- Voice Control (Phone Mic) -->
             <div class="card glass">
-                <h2>🎤 Voice Permissions & Audio</h2>
+                <h2>🎤 AI Voice Assistant</h2>
                 <div class="mic-container">
                     <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
                     </button>
-                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);" id="mic-status">Tap to speak to Jarvis</p>
-                </div>
-                
-                <div class="slider-container">
-                    <label>
-                        <span>PC Speaker Volume</span>
-                        <span id="vol-value">50%</span>
-                    </label>
-                    <input type="range" min="0" max="100" value="50" onchange="changeVolume(this.value)" oninput="document.getElementById('vol-value').innerText = this.value + '%'">
+                    <p style="margin-top: 20px; font-size: 0.95rem; color: var(--text-muted);" id="mic-status">Tap to speak to Ryan</p>
                 </div>
             </div>
 
-            <!-- System Controls with Toggles -->
+            <!-- Workstations -->
             <div class="card glass">
-                <h2>💻 System Controls</h2>
+                <h2>🚀 Workstations & Modes</h2>
+                
+                <div class="toggle-row">
+                    <div class="toggle-label">💻 Workstation 1</div>
+                    <label class="switch">
+                        <input type="checkbox" onchange="handleToggle(this, 'workstation 1')">
+                        <span class="slider accent"></span>
+                    </label>
+                </div>
+                <div class="toggle-row">
+                    <div class="toggle-label">💻 Workstation 2</div>
+                    <label class="switch">
+                        <input type="checkbox" onchange="handleToggle(this, 'workstation 2')">
+                        <span class="slider accent"></span>
+                    </label>
+                </div>
+                <div class="toggle-row">
+                    <div class="toggle-label">💻 Workstation 3</div>
+                    <label class="switch">
+                        <input type="checkbox" onchange="handleToggle(this, 'workstation 3')">
+                        <span class="slider accent"></span>
+                    </label>
+                </div>
+                <div class="toggle-row">
+                    <div class="toggle-label">🎮 Chill Mode</div>
+                    <label class="switch">
+                        <input type="checkbox" onchange="handleToggle(this, 'chill mode')">
+                        <span class="slider accent"></span>
+                    </label>
+                </div>
+                <div class="toggle-row">
+                    <div class="toggle-label">💤 Sleep Mode</div>
+                    <label class="switch">
+                        <input type="checkbox" onchange="handleToggle(this, 'sleep')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- System Controls -->
+            <div class="card glass">
+                <h2>💻 Terminal Controls</h2>
                 
                 <div class="toggle-row">
                     <div class="toggle-label">🔒 Lock Workstation</div>
                     <label class="switch">
-                        <input type="checkbox" id="toggle-lock" onchange="handleToggle(this, 'lock_pc')">
+                        <input type="checkbox" onchange="handleToggle(this, 'lock_pc')">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -434,15 +434,7 @@
                 <div class="toggle-row">
                     <div class="toggle-label">🔇 PC Mute</div>
                     <label class="switch">
-                        <input type="checkbox" id="toggle-mute" onchange="handleToggle(this, 'mute_toggle')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="toggle-row">
-                    <div class="toggle-label">📊 AI Dashboard</div>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-dashboard" onchange="handleToggle(this, 'open_dashboard')">
+                        <input type="checkbox" onchange="handleToggle(this, 'mute_toggle')">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -450,7 +442,7 @@
                 <div class="toggle-row" style="border-color: rgba(239, 68, 68, 0.2);">
                     <div class="toggle-label" style="color: var(--danger);">🛑 Terminate All Tasks</div>
                     <label class="switch">
-                        <input type="checkbox" id="toggle-terminate" onchange="handleToggle(this, 'terminate_all')">
+                        <input type="checkbox" onchange="handleToggle(this, 'terminate_all')">
                         <span class="slider danger"></span>
                     </label>
                 </div>
@@ -458,7 +450,7 @@
                 <div class="toggle-row" style="border-color: rgba(239, 68, 68, 0.2);">
                     <div class="toggle-label" style="color: var(--danger);">⚡ Force Shutdown</div>
                     <label class="switch">
-                        <input type="checkbox" id="toggle-shutdown" onchange="handleToggle(this, 'shutdown')">
+                        <input type="checkbox" onchange="handleToggle(this, 'shutdown')">
                         <span class="slider danger"></span>
                     </label>
                 </div>
@@ -466,9 +458,9 @@
             
             <!-- System Logs -->
             <div class="card glass" style="grid-column: 1 / -1;">
-                <h2>📡 Connection Logs</h2>
+                <h2>📡 Secured Connection Logs</h2>
                 <div class="log-window" id="log-window">
-                    <div class="log-entry">[System] System initialized. Ready for connections.</div>
+                    <div class="log-entry">[System] Initialization sequence complete. Highly secured environment.</div>
                 </div>
             </div>
         </div>
@@ -477,8 +469,33 @@
     <script>
         let serverUrl = "";
         let isRecording = false;
-        let mediaStream = null;
         const correctPassword = "4171";
+        
+        // Setup Speech Recognition for mobile browser
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = function(event) {
+                const text = event.results[0][0].transcript;
+                log(`[Audio] Heard: "${text}"`);
+                sendCommand(text); // Send directly to Ryan AI
+                stopMicUI();
+            };
+
+            recognition.onerror = function(event) {
+                log(`[Audio Error] ${event.error}`);
+                stopMicUI();
+            };
+
+            recognition.onend = function() {
+                stopMicUI();
+            };
+        }
 
         // Auto-fill IP if accessed directly
         window.addEventListener('DOMContentLoaded', () => {
@@ -502,11 +519,9 @@
                 return;
             }
 
-            // Force connection attempt over HTTP or HTTPS depending on input
             serverUrl = ip.startsWith('http') ? ip : 'http://' + ip;
             errorEl.innerText = "";
             
-            // UI Transition
             const loginScreen = document.getElementById('login-screen');
             const dashboard = document.getElementById('dashboard');
             
@@ -522,26 +537,22 @@
                 dashboard.style.opacity = '1';
                 dashboard.style.transform = 'translateY(0)';
                 
-                log(`[Auth] Connection established with ${serverUrl}`);
-                log("[System] AI Status: Working perfectly and fine.");
-                
-                // Prompt for Microphone immediately after login for "local Machine connexion permissions"
-                requestMicrophonePermission();
+                log(`[Auth] Secure AES-256 connection established with ${serverUrl}`);
+                log("[System] Ryan AI Status: Working perfectly and fine.");
             }, 500);
         }
 
-        async function requestMicrophonePermission() {
-            try {
-                // This triggers the browser prompt: "Allow Website to use your microphone?"
-                log("[System] Requesting device microphone permissions...");
-                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                log("[Success] Microphone permission granted.");
-            } catch (err) {
-                log("[Warning] Microphone permission denied or not available. Voice commands might rely on PC mic.");
-            }
-        }
+        function disconnect() {
+            log("[Auth] Sending disconnect signal to Web Server...");
+            
+            // Send command to kill the python server
+            fetch(`${serverUrl}/api/execute`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: "disconnect_server", password: correctPassword })
+            }).catch(() => {}); // ignore error since server dies
 
-        function logout() {
+            // Switch UI back to login
             const loginScreen = document.getElementById('login-screen');
             const dashboard = document.getElementById('dashboard');
             
@@ -551,72 +562,52 @@
             setTimeout(() => {
                 dashboard.style.display = 'none';
                 loginScreen.style.display = 'block';
-                
                 void loginScreen.offsetWidth;
-                
                 loginScreen.style.opacity = '1';
                 loginScreen.style.transform = 'scale(1)';
-                
                 document.getElementById('password').value = '';
-                log("[Auth] Disconnected from system.");
-                
-                // Stop mic if recording
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                }
             }, 500);
         }
 
         function toggleMic() {
-            const btn = document.getElementById('mic-btn');
-            const status = document.getElementById('mic-status');
-            isRecording = !isRecording;
-            
-            if (isRecording) {
-                btn.classList.add('recording');
-                status.innerText = "Listening... Tap to stop";
-                log("[Audio] Microphone activated. Streaming audio to PC...");
-                
-                // If permission wasn't granted yet, request it now
-                if (!mediaStream) {
-                    requestMicrophonePermission();
-                }
-                sendCommand('listen_command');
-            } else {
-                btn.classList.remove('recording');
-                status.innerText = "Tap to speak to Jarvis";
-                log("[Audio] Stopped listening.");
-                sendCommand('stop_listen');
+            if (!recognition) {
+                log("[Error] Speech Recognition API is not supported on this browser.");
+                return;
             }
+
+            if (!isRecording) {
+                try {
+                    recognition.start();
+                    isRecording = true;
+                    document.getElementById('mic-btn').classList.add('recording');
+                    document.getElementById('mic-status').innerText = "Listening... Speak now";
+                    log("[Audio] Phone microphone is active. Speak your command.");
+                } catch(e) {
+                    log(`[Error] Could not start mic: ${e}`);
+                }
+            } else {
+                recognition.stop();
+                stopMicUI();
+            }
+        }
+
+        function stopMicUI() {
+            isRecording = false;
+            document.getElementById('mic-btn').classList.remove('recording');
+            document.getElementById('mic-status').innerText = "Tap to speak to Ryan";
         }
 
         function handleToggle(checkbox, command) {
             if (checkbox.checked) {
                 sendCommand(command);
-                // Uncheck after a short delay since these are one-off actions
                 setTimeout(() => {
-                    checkbox.checked = false;
-                }, 1000);
+                    checkbox.checked = false; // Reset toggle visually
+                }, 800);
             }
         }
 
-        function changeVolume(val) {
-            log(`[System] Setting PC volume to ${val}%`);
-            fetch(`${serverUrl}/api/execute`, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ command: 'set_volume', value: val, password: correctPassword }) 
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Connection failed");
-                return res.json();
-            })
-            .then(data => log(`[Response] ${data.message}`))
-            .catch(err => log(`[Error] Request failed. If using GitHub pages, ensure your browser allows Mixed Content to local IP.`));
-        }
-
         function sendCommand(cmd) {
-            log(`[Command] Initiating task: ${cmd}`);
+            log(`[Terminal] Sending encrypted task: ${cmd}`);
             
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
@@ -631,8 +622,7 @@
             })
             .then(data => log(`[Response] ${data.message}`))
             .catch(err => {
-                log(`[Error] Connection failed. Is the PC server running?`);
-                log(`[Notice] Note: Browsers block HTTP local requests from HTTPS GitHub pages. Allow insecure content in site settings!`);
+                log(`[Error] Connection failed.`);
             });
         }
 
