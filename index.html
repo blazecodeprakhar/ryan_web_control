@@ -3,99 +3,139 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ryan AI Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ryan AI Premium Control</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#050505">
     <link rel="apple-touch-icon" href="favicon.svg">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         :root {
-            --bg-color: #000000;
-            --panel-bg: rgba(5, 5, 5, 0.7);
-            --panel-border: rgba(255, 255, 255, 0.05);
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg: #050505;
+            --surface: #0a0a0a;
+            --surface-elevated: #111111;
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --accent: #22d3ee;
+            --accent-glow: rgba(34, 211, 238, 0.5);
             --danger: #ef4444;
-            --danger-hover: #dc2626;
             --success: #10b981;
-            --accent: #d946ef;
-            --accent-hover: #c026d3;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(10, 10, 10, 0.8);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: 'Lexend', sans-serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.1) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 10px var(--primary-glow); }
+            50% { box-shadow: 0 0 25px var(--primary-glow); }
+            100% { box-shadow: 0 0 10px var(--primary-glow); }
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.15), transparent 25%);
-            background-attachment: fixed;
-            overflow-x: hidden;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .glass {
-            background: var(--panel-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--panel-border);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .glass:hover {
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        #login-screen {
+        .login-card {
             width: 100%;
-            max-width: 420px;
-            padding: 40px;
+            max-width: 400px;
+            padding: 40px 30px;
             text-align: center;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            position: absolute;
         }
 
-        #login-screen h1 {
-            margin-bottom: 8px;
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 22px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px var(--primary-glow);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .brand-logo svg {
+            width: 45px;
+            height: 45px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2rem;
             font-weight: 800;
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #a855f7, #6366f1);
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, #a1a1aa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
         }
 
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
-            }
-
-            to {
-                text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-            }
-        }
-
-        #login-screen p {
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            font-size: 1rem;
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 32px;
         }
 
         .input-group {
@@ -105,812 +145,775 @@
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
+            font-size: 0.85rem;
             font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            margin-left: 4px;
         }
 
         .input-group input {
             width: 100%;
             padding: 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.5);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             color: white;
+            font-family: inherit;
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
         }
 
         .input-group input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(217, 70, 239, 0.3);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
 
-        button.main-btn {
+        .btn-primary {
             width: 100%;
             padding: 16px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary));
             border: none;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 16px;
             color: white;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 8px 24px var(--primary-glow);
         }
 
-        button.main-btn:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 12px 32px var(--primary-glow);
         }
 
-        button.main-btn:active {
+        .btn-primary:active {
             transform: scale(0.98);
         }
 
-        .error-msg {
-            color: var(--danger);
-            font-size: 0.9rem;
-            margin-top: 10px;
-            min-height: 20px;
+        .btn-outline {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
             font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
         }
 
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-secondary);
+        }
+
+        /* Dashboard */
         #dashboard {
             display: none;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
             width: 100%;
-            max-width: 1200px;
-            padding: 40px 20px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeIn 0.6s ease-out;
         }
 
-        .dashboard-header {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 20px 30px;
+            margin-bottom: 30px;
+            padding: 10px 0;
         }
 
-        .dashboard-header h2 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #60a5fa, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .status-badge {
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
             background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
             color: var(--success);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
         }
 
         .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--success);
+            width: 8px;
+            height: 8px;
+            background: var(--success);
             border-radius: 50%;
             box-shadow: 0 0 10px var(--success);
-            animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-            }
-
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
-            }
-
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-        }
-
-        .grid {
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
 
-        .card h2 {
-            font-size: 1.4rem;
+        .card {
+            padding: 24px;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 15px;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        /* Buttons vs Toggles */
-        .action-btn {
+        .card-full {
+            grid-column: span 2;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
             display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .card-title svg {
+            color: var(--primary);
+        }
+
+        /* Control Buttons */
+        .control-btn {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
             color: white;
-            font-size: 1.05rem;
             font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            text-align: left;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .action-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-            border-color: rgba(255, 255, 255, 0.2);
+        .control-btn:active {
+            transform: scale(0.96);
         }
 
-        .action-btn:active {
-            transform: scale(0.98);
+        .control-btn.accent {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(34, 211, 238, 0.1));
+            border-color: rgba(99, 102, 241, 0.3);
         }
 
-        .action-btn.accent:hover {
-            background: rgba(217, 70, 239, 0.15);
-            border-color: var(--accent);
+        .control-btn.accent:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
         }
 
-        .action-btn.danger {
-            color: #fca5a5;
+        .control-btn.danger {
+            color: #fda4af;
         }
 
-        .action-btn.danger:hover {
-            background: rgba(239, 68, 68, 0.15);
+        .control-btn.danger:hover {
             border-color: var(--danger);
-            color: #fff;
+            background: rgba(239, 68, 68, 0.05);
         }
 
-        .action-btn.sleep-btn {
-            background: linear-gradient(to right, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
-            border-color: rgba(168, 85, 247, 0.3);
+        .icon-box {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
         }
 
-        .action-btn.wake-btn {
-            background: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
-            border-color: rgba(16, 185, 129, 0.3);
-            color: #a7f3d0;
-            display: none;
+        /* Special Large Unlock Button */
+        .unlock-hero {
+            grid-column: span 2;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(34, 211, 238, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Task Manager Styles */
+        .unlock-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .unlock-btn-large {
+            z-index: 1;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 15px 40px var(--primary-glow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .unlock-btn-large:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 20px 50px var(--primary-glow);
+        }
+
+        .unlock-btn-large:active {
+            transform: scale(0.95);
+        }
+
+        .unlock-btn-large svg {
+            width: 50px;
+            height: 50px;
+        }
+
+        .hero-text {
+            z-index: 1;
+        }
+
+        .hero-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .hero-text p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Mic Button */
+        .mic-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .mic-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--surface-elevated);
+            border: 2px solid var(--border);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .mic-btn.active {
+            background: var(--primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 30px var(--primary-glow);
+            animation: micPulse 1.5s infinite;
+        }
+
+        @keyframes micPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        /* Task Manager */
         .task-list {
-            max-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 320px;
             overflow-y: auto;
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding-right: 5px;
         }
 
         .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: 14px;
             padding: 12px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .task-item:last-child {
-            border-bottom: none;
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .task-icon {
+            font-size: 1.2rem;
         }
 
         .task-name {
-            font-size: 0.95rem;
-            font-family: monospace;
-            color: #e2e8f0;
-            word-break: break-all;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
-        .kill-btn {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .btn-kill {
             padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
             border-radius: 8px;
-            font-size: 0.8rem;
+            color: var(--danger);
+            font-size: 0.75rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            font-weight: 600;
         }
 
-        .kill-btn:hover {
+        .btn-kill:hover {
             background: var(--danger);
             color: white;
         }
 
-        /* Mic & Audio features */
-        .mic-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .mic-btn {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            border: none;
-            color: white;
-            font-size: 32px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .mic-btn::before {
-            content: '';
-            position: absolute;
-            inset: -5px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            opacity: 0.3;
-            filter: blur(10px);
-            z-index: -1;
-            transition: all 0.3s;
-        }
-
-        .mic-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .mic-btn:hover::before {
-            opacity: 0.6;
-            inset: -10px;
-            filter: blur(15px);
-        }
-
-        .mic-btn.recording {
-            background: linear-gradient(135deg, #ef4444, #f59e0b);
-            animation: pulse-recording 1.5s infinite;
-        }
-
-        .mic-btn.recording::before {
-            background: linear-gradient(135deg, #ef4444, #f59e0b);
-        }
-
-        @keyframes pulse-recording {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
-
-        .log-window {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 12px;
-            padding: 20px;
-            height: 220px;
+        /* Logs */
+        .log-container {
+            background: #000;
+            border-radius: 16px;
+            padding: 16px;
+            height: 180px;
             overflow-y: auto;
-            font-family: 'Consolas', monospace;
-            font-size: 0.9rem;
-            color: #a7f3d0;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            color: #34d399;
+            border: 1px solid var(--border);
         }
 
         .log-entry {
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            padding-bottom: 8px;
-            line-height: 1.4;
+            margin-bottom: 6px;
+            opacity: 0.8;
         }
 
-        .log-entry:last-child {
-            border-bottom: none;
+        .log-time {
+            color: var(--text-secondary);
+            margin-right: 8px;
         }
 
-        .btn-row {
-            display: flex;
-            gap: 15px;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        #sleep-overlay {
+        /* Navigation */
+        .nav-tabs {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(15px);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
-        #sleep-overlay h2 {
-            color: var(--text-main);
-            margin-bottom: 40px;
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .wake-hero-btn {
-            padding: 20px 50px;
-            font-size: 1.5rem;
-            border-radius: 50px;
-            background: linear-gradient(135deg, #10b981, #059669);
+        .nav-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
             border: none;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-weight: 600;
-        }
-
-        .wake-hero-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 45px rgba(16, 185, 129, 0.6);
-        }
-
-        /* Custom Modal System */
-        #custom-modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
+            background: transparent;
+            color: var(--text-secondary);
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* Modals */
+        #modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
             opacity: 0;
-            pointer-events: none;
             transition: opacity 0.3s ease;
         }
-        
-        #custom-modal-overlay.active {
+
+        #modal-overlay.active {
+            display: flex;
             opacity: 1;
-            pointer-events: all;
         }
-        
-        .custom-modal {
-            width: 90%;
-            max-width: 400px;
-            padding: 30px;
+
+        .modal {
+            width: 100%;
+            max-width: 380px;
+            padding: 32px;
             text-align: center;
             transform: scale(0.9);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        #custom-modal-overlay.active .custom-modal {
-            transform: scale(1);
-        }
-        
-        .custom-modal h3 {
-            font-size: 1.6rem;
-            margin-bottom: 15px;
-            background: linear-gradient(to right, #fca5a5, #ef4444);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .custom-modal p {
-            color: var(--text-main);
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-            line-height: 1.5;
-        }
-        
-        .modal-btn-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .modal-btn-row .action-btn {
-            justify-content: center;
-            flex: 1;
         }
 
-        /* Mobile Perfect Responsiveness */
-        @media (max-width: 600px) {
-            #login-screen {
-                padding: 30px 20px;
-                border-radius: 20px;
-                border-width: 0;
-                box-shadow: none;
-            }
-            .dashboard-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-                padding: 20px;
-            }
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .action-btn {
-                padding: 14px 16px;
-                font-size: 1rem;
-            }
-            .mic-btn {
-                width: 80px; height: 80px; font-size: 24px;
-            }
-            .card {
-                padding: 20px;
-            }
+        #modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        @media (max-width: 480px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .card-full { grid-column: span 1; }
+            .unlock-hero { grid-column: span 1; }
+        }
+        
+        /* QR Reader Overlay */
+        #qr-overlay {
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        #reader { width: 100%; height: 100%; }
+        
+        .qr-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2001;
+            padding: 12px 20px;
+            background: white;
+            color: black;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Custom Premium Modal -->
-    <div id="custom-modal-overlay">
-        <div class="custom-modal glass" id="custom-modal">
-            <h3 id="custom-modal-title">Confirm</h3>
-            <p id="custom-modal-message">Are you sure?</p>
-            <div class="modal-btn-row">
-                <button class="action-btn" id="modal-cancel-btn" onclick="closeModal()">Cancel</button>
-                <button class="action-btn danger" id="modal-confirm-btn">Confirm</button>
+    <!-- Modal System -->
+    <div id="modal-overlay">
+        <div class="modal glass">
+            <h3 id="modal-title">Confirm Action</h3>
+            <p id="modal-message">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="btn-outline" style="margin:0" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" id="modal-confirm" style="box-shadow:none">Confirm</button>
             </div>
         </div>
     </div>
 
-    <!-- Sleep Overlay -->
-    <div id="sleep-overlay">
-        <h2>System is Sleeping</h2>
-        <button class="wake-hero-btn" onclick="toggleSleep(false)">☀️ Wake Up System</button>
+    <!-- QR Scanner -->
+    <div id="qr-overlay">
+        <button class="qr-close" onclick="stopQR()">Close</button>
+        <div id="reader"></div>
     </div>
 
     <!-- Login Screen -->
-    <div id="login-screen" class="glass">
-        <h1>Ryan AI</h1>
-        <p>Establish a secure local connection to AI Terminal</p>
+    <div id="login-screen">
+        <div class="login-card glass">
+            <div class="brand-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M12 8v4"></path>
+                    <path d="M12 16h.01"></path>
+                </svg>
+            </div>
+            <h1>Ryan AI Premium</h1>
+            <p class="subtitle">Secure Node Connection Protocol</p>
 
-        <div class="input-group">
-            <label for="local-ip">Local PC Address (IP:Port)</label>
-            <input type="text" id="local-ip" placeholder="e.g. 192.168.1.5:5000">
-        </div>
+            <div class="input-group">
+                <label>Terminal Address</label>
+                <input type="text" id="local-ip" placeholder="0.0.0.0:5000" spellcheck="false">
+            </div>
 
-        <div class="input-group">
-            <label for="password">Connection Password</label>
-            <input type="password" id="password" placeholder="Enter Secure Password">
-        </div>
+            <div class="input-group">
+                <label>Access Key</label>
+                <input type="password" id="password" placeholder="••••••••" spellcheck="false">
+            </div>
 
-        <div class="error-msg" id="login-error"></div>
+            <div id="login-error" style="color:var(--danger); font-size:0.85rem; margin-bottom:15px; font-weight:600; min-height:20px;"></div>
 
-        <button class="main-btn" onclick="attemptLogin()" style="margin-bottom: 15px;">Connect to System</button>
-        <button class="action-btn accent" onclick="scanQR()" style="justify-content: center; width: 100%;">📷 Scan QR
-            Code</button>
-
-        <div id="reader" style="width: 100%; margin-top: 15px; border-radius: 12px; overflow: hidden; display: none;">
+            <button class="btn-primary" onclick="attemptLogin()">Establish Link</button>
+            <button class="btn-outline" onclick="startQR()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="7" y="17" width="2" height="2"></rect>
+                    <rect x="17" y="17" width="2" height="2"></rect>
+                    <rect x="7" y="7" width="2" height="2"></rect>
+                    <rect x="17" y="7" width="2" height="2"></rect>
+                    <rect x="7" y="14" width="2" height="2"></rect>
+                </svg>
+                Scan Access Node
+            </button>
         </div>
     </div>
 
     <!-- Dashboard -->
     <div id="dashboard">
-        <div class="dashboard-header glass">
-            <h2>Ryan AI Terminal</h2>
-            <div class="status-badge">
-                <div class="status-dot"></div>
-                AI Status: Online & Secured
+        <div class="header">
+            <div class="user-info">
+                <div class="avatar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-weight: 700; font-size: 1.1rem;">Ryan AI Core</div>
+                    <div class="status-pill">
+                        <div class="status-dot"></div>
+                        Encrypted Connection
+                    </div>
+                </div>
             </div>
-            <button class="action-btn danger" onclick="disconnect()"
-                style="width: auto; padding: 10px 20px; font-size: 0.9rem;">Disconnect Server</button>
+            <button class="btn-kill" style="padding:10px 15px" onclick="disconnect()">Logout</button>
         </div>
 
-        <div class="grid">
+        <div class="grid-container">
+            <!-- Hero Unlock Button -->
+            <div class="unlock-hero glass">
+                <button class="unlock-btn-large" onclick="sendCommand('unlock_pc')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </button>
+                <div class="hero-text">
+                    <h3>One-Tap Unlock</h3>
+                    <p>Wakes PC and enters secret key</p>
+                </div>
+            </div>
+
             <!-- Voice Control -->
             <div class="card glass">
-                <h2>🎤 AI Voice Assistant</h2>
-                <div class="mic-container">
+                <div class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="22"></line>
+                    </svg>
+                    Voice Assistant
+                </div>
+                <div class="mic-section">
                     <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                             <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                            <line x1="12" y1="19" x2="12" y2="22"></line>
                         </svg>
                     </button>
-                    <p style="margin-top: 25px; font-size: 1.1rem; color: var(--text-muted); font-weight: 300;"
-                        id="mic-status">Tap to speak to Ryan</p>
+                    <div id="mic-status" style="font-size:0.85rem; color:var(--text-secondary); font-weight:500">Idle</div>
                 </div>
+            </div>
+
+            <!-- System Power -->
+            <div class="card glass">
+                <div class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                    </svg>
+                    Power Management
+                </div>
+                <button class="control-btn" onclick="sendCommand('lock_pc')">
+                    <span>Lock Workstation</span>
+                    <div class="icon-box">🔒</div>
+                </button>
+                <button class="control-btn accent" onclick="confirmAction('System Sleep', 'Suspend all operations and put PC to sleep?', 'system_sleep')">
+                    <span>Sleep Mode</span>
+                    <div class="icon-box">🌙</div>
+                </button>
+                <button class="control-btn danger" onclick="confirmAction('Force Shutdown', 'Instantly kill all processes and power down?', 'shutdown')">
+                    <span>Shut Down</span>
+                    <div class="icon-box">⚡</div>
+                </button>
             </div>
 
             <!-- Workstations -->
-            <div class="card glass">
-                <h2>🚀 Workstations & Modes</h2>
-
-                <button class="action-btn accent" onclick="sendCommand('workstation 1')">
-                    <span>💻 Activate Workstation 1</span>
-                    <span>→</span>
-                </button>
-                <button class="action-btn accent" onclick="sendCommand('workstation 2')">
-                    <span>💻 Activate Workstation 2</span>
-                    <span>→</span>
-                </button>
-                <button class="action-btn accent" onclick="sendCommand('workstation 3')">
-                    <span>💻 Activate Workstation 3</span>
-                    <span>→</span>
-                </button>
-                <button class="action-btn accent" onclick="sendCommand('chill mode')">
-                    <span>🎮 Activate Chill Mode</span>
-                    <span>→</span>
-                </button>
-            </div>
-
-            <!-- System Controls -->
-            <div class="card glass">
-                <h2>Terminal Controls</h2>
-
-                <div class="btn-row" style="margin-bottom: 10px;">
-                    <button class="action-btn" onclick="sendCommand('lock_pc')"
-                        style="flex: 1; justify-content: center;">
-                        <span>Lock PC</span>
+            <div class="card glass card-full">
+                <div class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    Environment Presets
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <button class="control-btn" onclick="sendCommand('workstation 1')">
+                        <span>Workstation 1</span>
+                        <div class="icon-box">💻</div>
                     </button>
-                    <button class="action-btn accent" onclick="sendCommand('unlock_pc')"
-                        style="flex: 1; justify-content: center;">
-                        <span>Unlock PC</span>
+                    <button class="control-btn" onclick="sendCommand('workstation 2')">
+                        <span>Workstation 2</span>
+                        <div class="icon-box">🖥️</div>
+                    </button>
+                    <button class="control-btn" onclick="sendCommand('workstation 3')">
+                        <span>Workstation 3</span>
+                        <div class="icon-box">🏛️</div>
+                    </button>
+                    <button class="control-btn accent" onclick="sendCommand('chill mode')">
+                        <span>Chill Mode</span>
+                        <div class="icon-box">🎮</div>
                     </button>
                 </div>
-
-                <button class="action-btn sleep-btn"
-                    onclick="showConfirm('System Sleep', 'Are you sure you want to put the OS to sleep?', () => sendCommand('system_sleep'), false)"
-                    style="margin-bottom: 10px;">
-                    <span>Put System to Sleep</span>
-                    <span>⏾</span>
-                </button>
-
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px; margin-bottom: 5px;">
-                    <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">Volume Control</div>
-                    <div class="btn-row">
-                        <button class="action-btn" style="justify-content: center;"
-                            onclick="sendCommand('volume_down')">🔉 Down</button>
-                        <button class="action-btn" style="justify-content: center;"
-                            onclick="sendCommand('mute_toggle')">🔇 Mute</button>
-                        <button class="action-btn" style="justify-content: center;"
-                            onclick="sendCommand('volume_up')">🔊 Up</button>
-                    </div>
-                </div>
-
-                <button class="action-btn danger"
-                    onclick="showConfirm('Terminate Tasks', 'Are you sure you want to terminate all active user applications?', () => sendCommand('terminate_all'))">
-                    <span>🛑 Terminate All Tasks</span>
-                </button>
-
-                <button class="action-btn danger"
-                    onclick="showConfirm('Force Shutdown', 'WARNING: This will forcefully shut down your PC instantly. Are you completely sure?', () => sendCommand('shutdown'))">
-                    <span>⚡ Force Shutdown PC</span>
-                </button>
             </div>
 
             <!-- Task Manager -->
-            <div class="card glass">
-                <h2>⚙️ Task Manager
-                    <button onclick="fetchTasks()"
-                        style="margin-left: auto; background:none; border:none; color: var(--primary); cursor: pointer; font-size: 1.2rem; transition: transform 0.3s;"
-                        onmouseover="this.style.transform='rotate(180deg)'"
-                        onmouseout="this.style.transform='rotate(0deg)'">↻</button>
-                </h2>
-                <div class="task-list" id="task-list">
-                    <div style="padding: 20px; text-align: center; color: var(--text-muted);">Loading tasks...</div>
+            <div class="card glass card-full">
+                <div class="card-title" style="justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Process Monitor
+                    </div>
+                    <button class="btn-kill" style="border:none; background:transparent; font-size:1.2rem; color:var(--primary)" onclick="fetchTasks()">↻</button>
                 </div>
+                <div class="task-list" id="task-list">
+                    <div style="padding:20px; text-align:center; color:var(--text-secondary); font-size:0.9rem">Fetching active processes...</div>
+                </div>
+                <button class="btn-outline" onclick="confirmAction('Kill All Processes', 'This will terminate all visible user applications.', 'terminate_all')">Terminate All App Tasks</button>
             </div>
 
-            <!-- System Logs -->
-            <div class="card glass" style="grid-column: 1 / -1;">
-                <h2>📡 Secured Connection Logs</h2>
-                <div class="log-window" id="log-window">
-                    <div class="log-entry">[System] Initialization sequence complete. Highly secured environment.</div>
+            <!-- Logs -->
+            <div class="card glass card-full">
+                <div class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg>
+                    Terminal Logs
                 </div>
+                <div class="log-container" id="log-window"></div>
             </div>
         </div>
     </div>
 
+    <!-- Navigation -->
+    <div class="nav-tabs" id="nav-tabs" style="display:none">
+        <button class="nav-btn active" onclick="switchTab('dash')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+        </button>
+        <button class="nav-btn" onclick="confirmAction('Force Close', 'Shut down the web controller connection?', 'disconnect_server')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                <line x1="12" y1="2" x2="12" y2="12"></line>
+            </svg>
+        </button>
+    </div>
+
     <script>
         let serverUrl = "";
+        let sessionKey = "";
         let isRecording = false;
-        let isSleeping = false;
 
-        // Register Service Worker for PWA and Notifications
+        // PWA Registration
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                console.log('Service Worker Registered');
-            }).catch(err => {
-                console.log('Service Worker Registration Failed', err);
-            });
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed', err));
         }
 
-        // Local Notifications (Time Window Logic)
-        function scheduleLocalNotification(title, body, delayMinutes = 1) {
-            if (!('Notification' in window)) return;
-
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    const targetTime = Date.now() + (delayMinutes * 60 * 1000);
-
-                    // Fallback polling for time window logic if browser throttles setTimeout
-                    const checkInterval = setInterval(() => {
-                        const now = Date.now();
-                        // 2-minute time window logic
-                        if (now >= targetTime && now <= targetTime + (2 * 60 * 1000)) {
-                            clearInterval(checkInterval);
-
-                            // Try SW notification first for background capability
-                            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-                                navigator.serviceWorker.controller.postMessage({
-                                    type: 'SHOW_NOTIFICATION',
-                                    title: title,
-                                    body: body
-                                });
-                            } else {
-                                new Notification(title, { body: body, icon: 'favicon.svg' });
-                            }
-                        } else if (now > targetTime + (2 * 60 * 1000)) {
-                            // Expired
-                            clearInterval(checkInterval);
-                        }
-                    }, 10000); // Check every 10 seconds
-
-                    log(`[Notification] Scheduled: "${title}" in ${delayMinutes} minutes.`);
-                }
-            });
-        }
-
-        // Custom Modal Logic
-        function showConfirm(title, message, confirmCallback, isDanger=true) {
-            const overlay = document.getElementById('custom-modal-overlay');
-            document.getElementById('custom-modal-title').innerText = title;
-            document.getElementById('custom-modal-title').style.background = isDanger ? 'linear-gradient(to right, #fca5a5, #ef4444)' : 'linear-gradient(to right, #93c5fd, #3b82f6)';
-            document.getElementById('custom-modal-title').style.webkitBackgroundClip = 'text';
-            document.getElementById('custom-modal-message').innerText = message;
-            
-            const confirmBtn = document.getElementById('modal-confirm-btn');
-            confirmBtn.className = isDanger ? 'action-btn danger' : 'action-btn accent';
-            confirmBtn.innerText = isDanger ? 'Proceed' : 'Confirm';
-            
-            confirmBtn.onclick = () => {
-                closeModal();
-                confirmCallback();
-            };
-            
-            overlay.classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('custom-modal-overlay').classList.remove('active');
-        }
-
-        // Setup Speech Recognition for mobile browser
+        // Speech Recognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.continuous = false;
-            recognition.interimResults = false;
             recognition.lang = 'en-US';
-
-            recognition.onresult = function (event) {
-                const text = event.results[0][0].transcript;
-                log(`[Audio] Heard: "${text}"`);
-                sendCommand(text); // Send directly to Ryan AI
+            recognition.onresult = (e) => {
+                const text = e.results[0][0].transcript;
+                log(`Heard: "${text}"`);
+                sendCommand(text);
                 stopMicUI();
             };
-
-            recognition.onerror = function (event) {
-                log(`[Audio Error] ${event.error}`);
+            recognition.onend = stopMicUI;
+            recognition.onerror = (e) => {
+                log(`Mic Error: ${e.error}`);
                 stopMicUI();
             };
-
-            recognition.onend = function () {
-                stopMicUI();
-            };
-        }
-
-        // Auto-fill IP if accessed directly
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.location.hostname !== 'blazecodeprakhar.github.io' && window.location.hostname !== 'localhost') {
-                document.getElementById('local-ip').value = window.location.host;
-            }
-        });
-
-        function scanQR() {
-            const reader = document.getElementById('reader');
-            const errorEl = document.getElementById('login-error');
-            reader.style.display = 'block';
-            errorEl.innerText = "";
-
-            const html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                (decodedText, decodedResult) => {
-                    html5QrCode.stop().then(() => {
-                        reader.style.display = 'none';
-                    });
-
-                    const parts = decodedText.split('|');
-                    if (parts.length >= 2) {
-                        document.getElementById('local-ip').value = parts[0].replace('http://', '');
-                        document.getElementById('password').value = parts[1];
-                        if (typeof log === 'function') log("[QR] Successfully scanned QR code. Connecting...");
-                        attemptLogin();
-                    } else {
-                        errorEl.innerText = "Invalid QR Code format.";
-                    }
-                },
-                (errorMessage) => {
-                    // parse error, ignore
-                }
-            ).catch((err) => {
-                console.error(err);
-                errorEl.innerText = "Camera access failed or permission denied.";
-                reader.style.display = 'none';
-            });
         }
 
         function attemptLogin() {
@@ -918,185 +921,74 @@
             const pass = document.getElementById('password').value;
             const errorEl = document.getElementById('login-error');
 
-            if (!ip) {
-                errorEl.innerText = "Please enter the PC IP address.";
-                return;
-            }
-            if (!pass) {
-                errorEl.innerText = "Please enter the password.";
+            if (!ip || !pass) {
+                errorEl.innerText = "Missing credentials";
                 return;
             }
 
             serverUrl = ip.startsWith('http') ? ip : 'http://' + ip;
-
+            
+            errorEl.innerText = "Connecting...";
+            
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ command: "ping", password: pass })
             }).then(res => {
                 if (res.status === 401) {
-                    errorEl.innerText = "Access Denied: Incorrect password.";
+                    errorEl.innerText = "Invalid Access Key";
                 } else {
-                    window.sessionPassword = pass;
-                    errorEl.innerText = "";
+                    sessionKey = pass;
                     showDashboard();
                 }
             }).catch(err => {
-                errorEl.innerText = "Error connecting to server.";
+                errorEl.innerText = "Node Offline / Connection Timeout";
             });
         }
 
         function showDashboard() {
-            const loginScreen = document.getElementById('login-screen');
-            const dashboard = document.getElementById('dashboard');
-
-            loginScreen.style.opacity = '0';
-            loginScreen.style.transform = 'scale(0.95)';
-
-            setTimeout(() => {
-                loginScreen.style.display = 'none';
-                dashboard.style.display = 'block';
-
-                void dashboard.offsetWidth; // Trigger reflow
-
-                dashboard.style.opacity = '1';
-                dashboard.style.transform = 'translateY(0)';
-
-                log(`[Auth] Secure connection established with ${serverUrl}`);
-                log("[System] Ryan AI Status: Working perfectly and fine.");
-
-                fetchTasks(); // Load tasks initially
-            }, 500);
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('nav-tabs').style.display = 'flex';
+            log("System Link Established. Security Protocol: High");
+            fetchTasks();
+            setInterval(fetchTasks, 15000); // Background refresh
         }
 
         function disconnect() {
-            log("[Auth] Sending disconnect signal to Web Server...");
-
-            // Send command to kill the python server
-            fetch(`${serverUrl}/api/execute`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ command: "disconnect_server", password: window.sessionPassword })
-            }).catch(() => { }); // ignore error since server dies
-
-            // Switch UI back to login
-            const loginScreen = document.getElementById('login-screen');
-            const dashboard = document.getElementById('dashboard');
-
-            dashboard.style.opacity = '0';
-            dashboard.style.transform = 'translateY(30px)';
-
-            setTimeout(() => {
-                dashboard.style.display = 'none';
-                loginScreen.style.display = 'block';
-                void loginScreen.offsetWidth;
-                loginScreen.style.opacity = '1';
-                loginScreen.style.transform = 'scale(1)';
-                document.getElementById('password').value = '';
-                window.sessionPassword = null;
-            }, 600);
-        }
-
-        function toggleSleep(toSleep) {
-            isSleeping = toSleep;
-            const overlay = document.getElementById('sleep-overlay');
-
-            if (toSleep) {
-                sendCommand('sleep');
-                overlay.style.display = 'flex';
-                void overlay.offsetWidth;
-                overlay.style.opacity = '1';
-                log("[System] Ryan is now sleeping. Tap Wake Up to resume.");
-            } else {
-                sendCommand('wake');
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 500);
-                log("[System] Ryan has been woken up.");
-            }
-        }
-
-        function toggleMic() {
-            if (!recognition) {
-                log("[Error] Speech Recognition API is not supported on this browser.");
-                return;
-            }
-
-            if (!isRecording) {
-                try {
-                    recognition.start();
-                    isRecording = true;
-                    document.getElementById('mic-btn').classList.add('recording');
-                    document.getElementById('mic-status').innerText = "Listening... Speak now";
-                    log("[Audio] Phone microphone is active. Speak your command.");
-                } catch (e) {
-                    log(`[Error] Could not start mic: ${e}`);
-                }
-            } else {
-                recognition.stop();
-                stopMicUI();
-            }
-        }
-
-        function stopMicUI() {
-            isRecording = false;
-            document.getElementById('mic-btn').classList.remove('recording');
-            document.getElementById('mic-status').innerText = "Tap to speak to Ryan";
+            location.reload();
         }
 
         function sendCommand(cmd) {
-            log(`[Terminal] Sending encrypted task: ${cmd}`);
-
-            fetch(`${serverUrl}/api/execute`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ command: cmd, password: window.sessionPassword })
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error("Unauthorized or server error");
-                    return res.json();
-                })
-                .then(data => {
-                    log(`[Response] ${data.message}`);
-                    if (cmd === 'terminate_all') {
-                        setTimeout(fetchTasks, 2000);
-                    }
-                })
-                .catch(err => {
-                    log(`[Error] Connection failed.`);
-                });
-        }
-
-        function killTask(pid, name) {
-            log(`[Terminal] Terminating process ${name} (PID: ${pid})...`);
+            if (!serverUrl) return;
+            log(`Command Sent: ${cmd}`);
+            
             fetch(`${serverUrl}/api/execute`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ command: "kill_task", pid: pid, password: window.sessionPassword })
+                body: JSON.stringify({ command: cmd, password: sessionKey })
             })
-                .then(res => {
-                    if (res.ok) {
-                        log(`[Response] Task ${name} killed.`);
-                        setTimeout(fetchTasks, 1000);
-                    }
-                });
+            .then(res => res.json())
+            .then(data => {
+                log(`Response: ${data.message}`);
+                if (cmd === 'terminate_all' || cmd.includes('kill_task')) {
+                    setTimeout(fetchTasks, 1000);
+                }
+            })
+            .catch(err => log("Command execution failed. Link unstable."));
         }
 
         function fetchTasks() {
-            if (!serverUrl || !window.sessionPassword) return;
+            if (!serverUrl) return;
             const taskList = document.getElementById('task-list');
-            taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted);">Refreshing tasks...</div>`;
-
+            
             fetch(`${serverUrl}/api/tasks`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.tasks) {
                         taskList.innerHTML = '';
                         if (data.tasks.length === 0) {
-                            taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted);">No active tasks found.</div>`;
+                            taskList.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-secondary)">No active user processes</div>';
                         } else {
                             data.tasks.forEach(task => {
                                 const item = document.createElement('div');
@@ -1106,43 +998,124 @@
                                 const n = task.name.toLowerCase();
                                 if (n.includes('chrome')) icon = '🌐';
                                 else if (n.includes('edge')) icon = '🌊';
-                                else if (n.includes('antigravity') || n.includes('code')) icon = '👨‍💻';
+                                else if (n.includes('code')) icon = '👨‍💻';
                                 else if (n.includes('discord')) icon = '💬';
                                 else if (n.includes('spotify')) icon = '🎵';
-                                else if (n.includes('cmd') || n.includes('powershell')) icon = '⌨️';
                                 
                                 item.innerHTML = `
-                                <div class="task-name" style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 1.2rem;">${icon}</span>
-                                    ${task.name} 
-                                </div>
-                                <button class="kill-btn" onclick="killTask(${task.pid}, '${task.name}')">Kill</button>
-                            `;
+                                    <div class="task-info">
+                                        <span class="task-icon">${icon}</span>
+                                        <span class="task-name">${task.name}</span>
+                                    </div>
+                                    <button class="btn-kill" onclick="killTask(${task.pid}, '${task.name}')">Term</button>
+                                `;
                                 taskList.appendChild(item);
                             });
                         }
                     }
-                })
-                .catch(err => {
-                    taskList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--danger);">Failed to load tasks</div>`;
-                });
+                }).catch(() => {});
+        }
+
+        function killTask(pid, name) {
+            log(`Terminating: ${name} (PID ${pid})`);
+            fetch(`${serverUrl}/api/execute`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: "kill_task", pid: pid, password: sessionKey })
+            }).then(() => setTimeout(fetchTasks, 500));
         }
 
         function log(msg) {
             const win = document.getElementById('log-window');
-            const time = new Date().toLocaleTimeString();
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
             const entry = document.createElement('div');
             entry.className = 'log-entry';
-            entry.innerText = `[${time}] ${msg}`;
+            entry.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
             win.appendChild(entry);
             win.scrollTop = win.scrollHeight;
         }
 
-        document.getElementById('password').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                attemptLogin();
+        function toggleMic() {
+            if (!recognition) {
+                log("Speech API unsupported");
+                return;
             }
-        });
+            if (!isRecording) {
+                try {
+                    recognition.start();
+                    isRecording = true;
+                    document.getElementById('mic-btn').classList.add('active');
+                    document.getElementById('mic-status').innerText = "Listening...";
+                } catch(e) {}
+            } else {
+                recognition.stop();
+            }
+        }
+
+        function stopMicUI() {
+            isRecording = false;
+            document.getElementById('mic-btn').classList.remove('active');
+            document.getElementById('mic-status').innerText = "Idle";
+        }
+
+        // Modal Logic
+        let currentConfirm = null;
+        function confirmAction(title, msg, cmd) {
+            const overlay = document.getElementById('modal-overlay');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = msg;
+            
+            document.getElementById('modal-confirm').onclick = () => {
+                sendCommand(cmd);
+                closeModal();
+            };
+            
+            overlay.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        // QR Logic
+        let html5QrCode = null;
+        function startQR() {
+            document.getElementById('qr-overlay').style.display = 'flex';
+            html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (text) => {
+                    const parts = text.split('|');
+                    if (parts.length >= 2) {
+                        document.getElementById('local-ip').value = parts[0];
+                        document.getElementById('password').value = parts[1];
+                        stopQR();
+                        attemptLogin();
+                    }
+                }
+            ).catch(err => {
+                alert("Camera error: " + err);
+                stopQR();
+            });
+        }
+
+        function stopQR() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('qr-overlay').style.display = 'none';
+                });
+            } else {
+                document.getElementById('qr-overlay').style.display = 'none';
+            }
+        }
+
+        // Auto-fill IP logic
+        window.onload = () => {
+            if (window.location.hostname !== 'localhost' && !window.location.hostname.includes('github.io')) {
+                document.getElementById('local-ip').value = window.location.host;
+            }
+        };
     </script>
 </body>
 

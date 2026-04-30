@@ -39,32 +39,53 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             if self.path == '/api/tasks':
                 try:
                     import psutil
+                    import ctypes
+
+                    EnumWindows = ctypes.windll.user32.EnumWindows
+                    EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
+                    GetWindowTextLength = ctypes.windll.user32.GetWindowTextLengthW
+                    IsWindowVisible = ctypes.windll.user32.IsWindowVisible
+                    GetWindowThreadProcessId = ctypes.windll.user32.GetWindowThreadProcessId
+
+                    visible_pids = set()
+                    def foreach_window(hwnd, lParam):
+                        if IsWindowVisible(hwnd):
+                            length = GetWindowTextLength(hwnd)
+                            if length > 0:
+                                pid = ctypes.c_uint(0)
+                                GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+                                visible_pids.add(pid.value)
+                        return True
+                    
+                    EnumWindows(EnumWindowsProc(foreach_window), 0)
+
                     tasks = []
-                    for proc in psutil.process_iter(['pid', 'name', 'username']):
+                    unique_names = set()
+                    
+                    for proc in psutil.process_iter(['pid', 'name']):
                         try:
+                            pid = proc.info['pid']
                             name = proc.info['name']
-                            username = proc.info.get('username') or ''
                             
-                            is_user_proc = username and ('SYSTEM' not in username and 'SERVICE' not in username and 'AUTHORITY' not in username)
+                            sys_procs = ['explorer.exe', 'searchapp.exe', 'textinputhost.exe', 'applicationframehost.exe', 'startmenuexperiencehost.exe', 'systemsettings.exe']
                             
-                            sys_procs = ['explorer.exe', 'cmd.exe', 'conhost.exe', 'svchost.exe', 'taskhostw.exe', 'runtimebroker.exe', 'applicationframehost.exe', 'startmenuexperiencehost.exe', 'searchapp.exe', 'textinputhost.exe', 'ctfmon.exe', 'dllhost.exe', 'sihost.exe']
-                            
-                            if name and name.endswith('.exe') and is_user_proc and name.lower() not in sys_procs:
-                                tasks.append({"pid": proc.info['pid'], "name": name})
+                            if pid in visible_pids and name and name.endswith('.exe') and name.lower() not in sys_procs:
+                                if name not in unique_names:
+                                    unique_names.add(name)
+                                    clean_name = name[:-4].title()
+                                    if clean_name.lower() == "Code": clean_name = "Antigravity (VS Code)"
+                                    if clean_name.lower() == "Chrome": clean_name = "Google Chrome"
+                                    if clean_name.lower() == "Msedge": clean_name = "Microsoft Edge"
+                                    
+                                    tasks.append({"pid": pid, "name": clean_name})
                         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                             pass
-                    
-                    # filter unique names to keep list concise
-                    unique_tasks = {}
-                    for t in tasks:
-                        if t['name'] not in unique_tasks:
-                            unique_tasks[t['name']] = t
                     
                     self.send_response(200)
                     self.send_header('Access-Control-Allow-Origin', '*')
                     self.send_header('Content-type', 'application/json')
                     self.end_headers()
-                    self.wfile.write(json.dumps({"tasks": list(unique_tasks.values())}).encode('utf-8'))
+                    self.wfile.write(json.dumps({"tasks": tasks}).encode('utf-8'))
                 except Exception as e:
                     self.send_response(500)
                     self.end_headers()
@@ -152,12 +173,11 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             elif command == "terminate_all":
                 jarvis_cmd = "terminate all tasks"
             elif command == "kill_task":
-                import psutil
                 pid = data.get('pid')
                 try:
-                    p = psutil.Process(pid)
-                    p.terminate()
-                    print(f"Task {pid} terminated.")
+                    import os
+                    os.system(f"taskkill /F /PID {pid}")
+                    print(f"Task {pid} forcefully terminated.")
                 except Exception as e:
                     print(f"Failed to kill task {pid}: {e}")
             elif command == "mute_toggle":
@@ -176,11 +196,14 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             elif command == "unlock_pc":
                 import pyautogui
                 import time
+                print("Initiating Unlock PC sequence...")
                 pyautogui.press("space")
                 time.sleep(0.5)
-                pyautogui.write("4171")
+                pyautogui.press("space") # Second press to ensure wake
+                time.sleep(1.5)
+                pyautogui.write("4171", interval=0.1)
                 pyautogui.press("enter")
-                print("Unlock PC sequence initiated.")
+                print("Unlock PC sequence completed.")
             elif command == "system_sleep":
                 print("Initiating OS Sleep...")
                 os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
